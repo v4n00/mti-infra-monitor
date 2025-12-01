@@ -1,11 +1,10 @@
 import { Router, Request, Response } from 'express';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import { PrismaClient } from '@prisma/client';
 import { authenticateToken, AuthRequest } from '../middleware/auth';
+import prisma from '../config/prisma';
 
 const router = Router();
-const prisma = new PrismaClient();
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 
 router.post('/signup', async (req, res) => {
@@ -58,8 +57,24 @@ router.post('/login', async (req, res) => {
   }
 });
 
-router.get('/validate', authenticateToken, (req: AuthRequest, res) => {
-  res.json({ user: req.user });
+router.get('/validate', authenticateToken, async (req: AuthRequest, res) => {
+  if (!req.user) {
+    return res.status(401).json({ message: 'Unauthorized' });
+  }
+
+  try {
+    // Check if user still exists
+    const user = await prisma.user.findUnique({ where: { id: req.user.id } });
+    if (!user) {
+      return res.status(401).json({ message: 'User not found' });
+    }
+
+    // Generate new token
+    const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET);
+    res.json({ token, user: { id: user.id, email: user.email } });
+  } catch (error) {
+    res.status(500).json({ message: 'Internal server error' });
+  }
 });
 
 export default router;

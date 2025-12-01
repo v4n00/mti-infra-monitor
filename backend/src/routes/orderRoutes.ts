@@ -1,9 +1,9 @@
 import { Router, Request, Response } from 'express';
 import { PrismaClient } from '@prisma/client';
 import { AuthRequest } from '../middleware/auth';
+import prisma from '../config/prisma';
 
 const router = Router();
-const prisma = new PrismaClient();
 
 router.post('/', async (req: AuthRequest, res: Response) => {
   const { items } = req.body; // items: [{ productId, quantity }]
