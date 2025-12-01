@@ -1,42 +1,61 @@
 @baseUrl = http://localhost:3000/api
+@email = test1@example.com
+@password = testpassword123
 
-# @name signup
+# --- USER AUTHENTICATION ---
+
+### @name signup
 POST {{baseUrl}}/users/signup
 Content-Type: application/json
 
 {
-  "email": "test@example.com",
-  "password": "testpassword"
+  "email": "{{email}}",
+  "password": "{{password}}"
 }
 
-### 
-
-# @name login
+### @name login
 POST {{baseUrl}}/users/login
 Content-Type: application/json
 
 {
-  "email": "test@example.com",
-  "password": "testpassword"
+  "email": "{{email}}",
+  "password": "{{password}}"
 }
 
-### 
-
-# @name validateToken
+### @name validateToken
 @token = {{login.response.body.token}}
 GET {{baseUrl}}/users/validate
 Authorization: Bearer {{token}}
 
-###
+# --- PRODUCT ROUTER ---
 
-# @name getProducts
+### @name getProducts
 @token = {{login.response.body.token}}
 GET {{baseUrl}}/products
 Authorization: Bearer {{token}}
 
-###
-
-# @name getProductByCategory
+### @name getProductByCategory
 @token = {{login.response.body.token}}
 GET {{baseUrl}}/products?category=electronics
+Authorization: Bearer {{token}}
+
+# --- ORDER ROUTER ---
+
+
+### @name createOrder
+@token = {{login.response.body.token}}
+POST {{baseUrl}}/orders
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "items": [
+    { "productId": 1, "quantity": 2 },
+    { "productId": 2, "quantity": 1 }
+  ]
+}
+
+### @name getOrders
+@token = {{login.response.body.token}}
+GET {{baseUrl}}/orders
 Authorization: Bearer {{token}}

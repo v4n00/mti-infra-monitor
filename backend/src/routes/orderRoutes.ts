@@ -12,14 +12,18 @@ router.post('/', async (req: AuthRequest, res: Response) => {
     return res.status(400).json({ message: 'Invalid request' });
   }
 
+  if (items.some((item: any) => !item.productId || !item.quantity)) {
+    return res.status(400).json({ message: 'Each item must have productId and quantity' });
+  }
+
   try {
     const order = await prisma.order.create({
       data: {
         userId: req.user.id,
         orderItems: {
           create: items.map((item: any) => ({
-            productId: item.productId,
-            quantity: item.quantity,
+            productId: item.productId as number,
+            quantity: item.quantity as number,
           })),
         },
       },
@@ -28,7 +32,7 @@ router.post('/', async (req: AuthRequest, res: Response) => {
 
     res.status(201).json(order);
   } catch (error) {
-    res.status(500).json({ message: 'Internal server error' });
+    res.status(500).json({ message: `Internal server error ${error}` });
   }
 });
 

@@ -64,7 +64,6 @@ async function main() {
     create: {
       productId: product1.id,
       filename: 'laptop.jpg',
-      filepath: 'uploads/laptop.jpg',
     },
   });
 
@@ -74,7 +73,6 @@ async function main() {
     create: {
       productId: product2.id,
       filename: 'book.jpg',
-      filepath: 'uploads/book.jpg',
     },
   });
 
