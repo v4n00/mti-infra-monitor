@@ -4,7 +4,7 @@ import prisma from '../config/prisma';
 const router = Router();
 
 router.get('/', async (req: Request, res: Response) => {
-  const { category } = req.query; // make it lower
+  const { category } = req.query;
 
   try {
     const products = await prisma.product.findMany({

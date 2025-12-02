@@ -16,7 +16,7 @@ app.use(express.json());
 app.use('/api/users', userRoutes);
 
 // Protected routes
-app.use('/api/products', authenticateToken, productRoutes);
+app.use('/api/products', productRoutes);
 app.use('/api/orders', authenticateToken, orderRoutes);
 
 // Serve uploaded files

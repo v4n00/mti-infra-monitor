@@ -1,122 +1,131 @@
-import { SlidersHorizontal, Star } from "lucide-react"
+"use client"
+
+import { SlidersHorizontal } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import Navbar from "@/components/navbar"
+import { useState, useEffect } from "react"
 
-const products = [
-  {
-    id: 1,
-    name: "Pro Laptop X1",
-    price: 1299.99,
-    rating: 4.8,
-    reviews: 342,
-    image: "/modern-sleek-laptop-silver.jpg",
-    category: "Laptops",
-  },
-  {
-    id: 2,
-    name: "Wireless Earbuds Pro",
-    price: 199.99,
-    rating: 4.6,
-    reviews: 567,
-    image: "/premium-wireless-earbuds-white.jpg",
-    category: "Audio",
-  },
-  {
-    id: 3,
-    name: "Smart Watch Ultra",
-    price: 399.99,
-    rating: 4.7,
-    reviews: 234,
-    image: "/sleek-smartwatch-black.jpg",
-    category: "Wearables",
-  },
-  {
-    id: 4,
-    name: "4K Action Camera",
-    price: 349.99,
-    rating: 4.9,
-    reviews: 189,
-    image: "/compact-action-camera-4k.jpg",
-    category: "Cameras",
-  },
-  {
-    id: 5,
-    name: "Gaming Laptop Pro",
-    price: 1899.99,
-    rating: 4.9,
-    reviews: 421,
-    image: "/gaming-laptop-with-rgb.jpg",
-    category: "Laptops",
-  },
-  {
-    id: 6,
-    name: "Noise Cancelling Headphones",
-    price: 299.99,
-    rating: 4.7,
-    reviews: 892,
-    image: "/premium-black-headphones.jpg",
-    category: "Audio",
-  },
-  {
-    id: 7,
-    name: "Smartphone Pro Max",
-    price: 999.99,
-    rating: 4.8,
-    reviews: 1234,
-    image: "/flagship-smartphone-black.jpg",
-    category: "Smartphones",
-  },
-  {
-    id: 8,
-    name: "Mechanical Gaming Keyboard",
-    price: 149.99,
-    rating: 4.6,
-    reviews: 678,
-    image: "/rgb-mechanical-keyboard.jpg",
-    category: "Gaming",
-  },
-  {
-    id: 9,
-    name: '4K Smart TV 55"',
-    price: 799.99,
-    rating: 4.7,
-    reviews: 345,
-    image: "/modern-4k-smart-tv.jpg",
-    category: "TVs",
-  },
-  {
-    id: 10,
-    name: "Wireless Gaming Mouse",
-    price: 79.99,
-    rating: 4.5,
-    reviews: 456,
-    image: "/ergonomic-gaming-mouse.jpg",
-    category: "Gaming",
-  },
-  {
-    id: 11,
-    name: "Portable Bluetooth Speaker",
-    price: 129.99,
-    rating: 4.6,
-    reviews: 523,
-    image: "/portable-bluetooth-speaker.jpg",
-    category: "Speakers",
-  },
-  {
-    id: 12,
-    name: "Fitness Tracker Band",
-    price: 89.99,
-    rating: 4.4,
-    reviews: 789,
-    image: "/fitness-tracker-smartband.jpg",
-    category: "Wearables",
-  },
-]
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'
+
+interface Product {
+  id: number
+  name: string
+  description: string
+  price: number
+  category: string
+  images: { id: number; filename: string; filepath: string }[]
+}
+
+const categories = ["electronics", "books", "appliances", "sports"]
 
 export default function ShopPage() {
+  const [products, setProducts] = useState<Product[]>([])
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([])
+  const [sortBy, setSortBy] = useState('featured')
+
+  useEffect(() => {
+    fetchProducts()
+  }, [])
+
+  useEffect(() => {
+    filterAndSortProducts()
+  }, [products, selectedCategories, sortBy])
+
+  const fetchProducts = async () => {
+    try {
+      setLoading(true)
+      const response = await fetch(`${API_BASE_URL}/api/products`)
+      if (!response.ok) {
+        throw new Error('Failed to fetch products')
+      }
+      const data = await response.json()
+      setProducts(data)
+    } catch (err) {
+      setError('Failed to load products. Please try again.')
+      console.error('Error fetching products:', err)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const filterAndSortProducts = () => {
+    let filtered = products
+
+    // Filter by categories
+    if (selectedCategories.length > 0) {
+      filtered = filtered.filter(product =>
+        selectedCategories.includes(product.category.toLowerCase())
+      )
+    }
+
+    // Sort products
+    switch (sortBy) {
+      case 'price-low':
+        filtered.sort((a, b) => a.price - b.price)
+        break
+      case 'price-high':
+        filtered.sort((a, b) => b.price - a.price)
+        break
+      case 'rating':
+        // Since we don't have ratings in backend yet, keep as is
+        break
+      case 'newest':
+        // Since we don't have dates, keep as is
+        break
+      default:
+        // featured - keep original order
+        break
+    }
+
+    setFilteredProducts(filtered)
+  }
+
+  const handleCategoryChange = (category: string, checked: boolean) => {
+    if (checked) {
+      setSelectedCategories([...selectedCategories, category])
+    } else {
+      setSelectedCategories(selectedCategories.filter(c => c !== category))
+    }
+  }
+
+  const clearFilters = () => {
+    setSelectedCategories([])
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Navbar />
+        <div className="flex items-center justify-center min-h-[50vh]">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+            <p className="mt-4 text-muted-foreground">Loading products...</p>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Navbar />
+        <div className="flex items-center justify-center min-h-[50vh]">
+          <div className="text-center">
+            <p className="text-red-600 mb-4">{error}</p>
+            <Button onClick={fetchProducts}>Try Again</Button>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
@@ -124,7 +133,7 @@ export default function ShopPage() {
         {/* Page Header */}
         <div className="mb-8">
           <h1 className="text-balance text-4xl font-bold tracking-tight text-foreground">Shop All Products</h1>
-          <p className="mt-2 text-muted-foreground">Showing 12 of 324 products</p>
+          <p className="mt-2 text-muted-foreground">Showing {filteredProducts.length} of {products.length} products</p>
         </div>
 
         <div className="flex flex-col gap-8 lg:flex-row">
@@ -133,7 +142,7 @@ export default function ShopPage() {
             <div className="sticky top-20 space-y-6 rounded-lg border border-border bg-card p-6">
               <div className="flex items-center justify-between">
                 <h2 className="text-lg font-semibold text-foreground">Filters</h2>
-                <Button variant="ghost" size="sm" className="h-8 text-sm">
+                <Button variant="ghost" size="sm" className="h-8 text-sm" onClick={clearFilters}>
                   Clear all
                 </Button>
               </div>
@@ -142,19 +151,21 @@ export default function ShopPage() {
               <div className="space-y-3">
                 <h3 className="text-sm font-medium text-foreground">Category</h3>
                 <div className="space-y-2">
-                  {["Laptops", "Smartphones", "Audio", "Gaming", "Wearables", "Cameras", "TVs", "Speakers"].map(
-                    (category) => (
-                      <div key={category} className="flex items-center space-x-2">
-                        <Checkbox id={category} />
-                        <Label
-                          htmlFor={category}
-                          className="text-sm font-normal leading-none text-muted-foreground peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                        >
-                          {category}
-                        </Label>
-                      </div>
-                    ),
-                  )}
+                  {categories.map((category) => (
+                    <div key={category} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={category}
+                        checked={selectedCategories.includes(category)}
+                        onCheckedChange={(checked) => handleCategoryChange(category, checked as boolean)}
+                      />
+                      <Label
+                        htmlFor={category}
+                        className="text-sm font-normal leading-none text-muted-foreground peer-disabled:cursor-not-allowed peer-disabled:opacity-70 capitalize"
+                      >
+                        {category}
+                      </Label>
+                    </div>
+                  ))}
                 </div>
               </div>
 
@@ -205,8 +216,7 @@ export default function ShopPage() {
                         htmlFor={`rating-${rating}`}
                         className="flex items-center gap-1 text-sm font-normal leading-none text-muted-foreground peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                       >
-                        <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
-                        {rating}+ Stars
+                        ⭐ {rating}+ Stars
                       </Label>
                     </div>
                   ))}
@@ -223,7 +233,7 @@ export default function ShopPage() {
                 <SlidersHorizontal className="mr-2 h-4 w-4" />
                 Filters
               </Button>
-              <Select defaultValue="featured">
+              <Select value={sortBy} onValueChange={setSortBy}>
                 <SelectTrigger className="w-[180px]">
                   <SelectValue placeholder="Sort by" />
                 </SelectTrigger>
@@ -239,28 +249,22 @@ export default function ShopPage() {
 
             {/* Products Grid */}
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
-              {products.map((product) => (
+              {filteredProducts.map((product) => (
                 <div
                   key={product.id}
                   className="group overflow-hidden rounded-lg border border-border bg-card transition-all hover:border-primary/50 hover:shadow-lg"
                 >
                   <div className="aspect-square overflow-hidden bg-muted">
                     <img
-                      src={product.image || "/placeholder.svg"}
+                      src={product.images.length > 0 ? `${API_BASE_URL}/uploads/${product.images[0].filename}` : "/placeholder.svg"}
                       alt={product.name}
-                      className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                      className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105 aspect-square"
                     />
                   </div>
                   <div className="p-4">
-                    <p className="text-xs font-medium text-primary">{product.category}</p>
+                    <p className="text-xs font-medium text-primary capitalize">{product.category}</p>
                     <h3 className="mt-1 text-pretty text-lg font-semibold text-foreground">{product.name}</h3>
-                    <div className="mt-2 flex items-center gap-1">
-                      <div className="flex items-center">
-                        <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                        <span className="ml-1 text-sm font-medium text-foreground">{product.rating}</span>
-                      </div>
-                      <span className="text-sm text-muted-foreground">({product.reviews})</span>
-                    </div>
+                    <p className="mt-2 text-sm text-muted-foreground line-clamp-2">{product.description}</p>
                     <div className="mt-3 flex items-center justify-between">
                       <p className="text-2xl font-bold text-foreground">${product.price}</p>
                       <Button size="sm">Add to Cart</Button>
