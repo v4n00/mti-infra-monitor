@@ -17,55 +17,6 @@ export default function HomePage() {
     { name: "Speakers", icon: Speaker, description: "High-fidelity audio" },
   ]
 
-  const featuredProducts = [
-    {
-      id: 1,
-      name: 'Pro Laptop 15"',
-      price: 1299,
-      image: "/modern-sleek-laptop-silver.jpg",
-      category: "Laptops",
-    },
-    {
-      id: 2,
-      name: "Wireless Earbuds",
-      price: 199,
-      image: "/premium-wireless-earbuds-white.jpg",
-      category: "Audio",
-    },
-    {
-      id: 3,
-      name: "Smart Watch Pro",
-      price: 399,
-      image: "/sleek-smartwatch-black.jpg",
-      category: "Wearables",
-    },
-    {
-      id: 4,
-      name: "4K Action Camera",
-      price: 349,
-      image: "/compact-action-camera-4k.jpg",
-      category: "Cameras",
-    },
-  ]
-
-  const collections = [
-    {
-      name: "Living Room",
-      description: "Curated comfort for modern living",
-      image: "/modern-living-room.png",
-    },
-    {
-      name: "Bedroom",
-      description: "Create your perfect sanctuary",
-      image: "/minimalist-bedroom-design.jpg",
-    },
-    {
-      name: "Office",
-      description: "Productivity meets style",
-      image: "/modern-home-office.png",
-    },
-  ]
-
   return (
     <div className="min-h-screen bg-background">
       <Navbar />

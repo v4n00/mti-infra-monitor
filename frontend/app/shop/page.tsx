@@ -7,6 +7,8 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import Navbar from "@/components/navbar"
 import { useState, useEffect } from "react"
+import { useCart } from "@/lib/cart-context"
+import { toast } from "sonner"
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'
 
@@ -28,6 +30,7 @@ export default function ShopPage() {
   const [error, setError] = useState('')
   const [selectedCategories, setSelectedCategories] = useState<string[]>([])
   const [sortBy, setSortBy] = useState('featured')
+  const { addItem } = useCart()
 
   useEffect(() => {
     fetchProducts()
@@ -267,7 +270,7 @@ export default function ShopPage() {
                     <p className="mt-2 text-sm text-muted-foreground line-clamp-2">{product.description}</p>
                     <div className="mt-3 flex items-center justify-between">
                       <p className="text-2xl font-bold text-foreground">${product.price}</p>
-                      <Button size="sm">Add to Cart</Button>
+                      <Button size="sm" className="cursor-pointer" onClick={() => {addItem(product); toast.success(`${product.name} added to cart`)}}>Add to Cart</Button>
                     </div>
                   </div>
                 </div>

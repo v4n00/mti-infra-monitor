@@ -1,61 +1,18 @@
 "use client"
 
-import { useState } from "react"
 import Image from "next/image"
 import { Minus, Plus, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import Navbar from "@/components/navbar"
+import { useCart } from "@/lib/cart-context"
 
 export default function CartPage() {
-  const [cartItems, setCartItems] = useState([
-    {
-      id: 1,
-      name: "Ultra HD Gaming Laptop",
-      price: 1299.99,
-      quantity: 1,
-      image: "/gaming-laptop-with-rgb.jpg",
-      specs: "Intel i7, RTX 4060, 16GB RAM",
-    },
-    {
-      id: 2,
-      name: "Wireless Noise-Canceling Headphones",
-      price: 299.99,
-      quantity: 2,
-      image: "/premium-black-headphones.jpg",
-      specs: "Active Noise Cancellation, 30hr Battery",
-    },
-    {
-      id: 3,
-      name: "Mechanical RGB Keyboard",
-      price: 149.99,
-      quantity: 1,
-      image: "/rgb-mechanical-keyboard.jpg",
-      specs: "Cherry MX Switches, RGB Backlit",
-    },
-    {
-      id: 4,
-      name: "4K Smart TV",
-      price: 799.99,
-      quantity: 1,
-      image: "/modern-4k-smart-tv.jpg",
-      specs: '55" OLED, HDR10+, Smart Features',
-    },
-  ])
+  const { items, updateQuantity, removeItem, getTotalPrice, clearCart } = useCart()
 
-  const updateQuantity = (id: number, change: number) => {
-    setCartItems((items) =>
-      items.map((item) => (item.id === id ? { ...item, quantity: Math.max(1, item.quantity + change) } : item)),
-    )
-  }
-
-  const removeItem = (id: number) => {
-    setCartItems((items) => items.filter((item) => item.id !== id))
-  }
-
-  const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0)
-  const shipping = 15.0
+  const subtotal = getTotalPrice()
+  const shipping = items.length > 0 ? 15.0 : 0
   const tax = subtotal * 0.08
   const total = subtotal + shipping + tax
 
@@ -69,7 +26,7 @@ export default function CartPage() {
           <div className="grid gap-8 lg:grid-cols-3">
             {/* Cart Items - Left Side (2/3) */}
             <div className="space-y-4 lg:col-span-2">
-              {cartItems.length === 0 ? (
+              {items.length === 0 ? (
                 <div className="flex flex-col items-center justify-center rounded-lg border border-border bg-card p-12 text-center">
                   <p className="text-lg text-muted-foreground">Your cart is empty</p>
                   <Button className="mt-4" asChild>
@@ -78,23 +35,23 @@ export default function CartPage() {
                 </div>
               ) : (
                 <div className="max-h-[calc(100vh-200px)] space-y-4 overflow-y-auto pr-2">
-                  {cartItems.map((item) => (
+                  {items.map((item) => (
                     <div
                       key={item.id}
                       className="flex gap-4 rounded-lg border border-border bg-card p-4 transition-shadow hover:shadow-md"
                     >
-                      <div className="relative h-24 w-24 flex-shrink-0 overflow-hidden rounded-md bg-muted">
-                        <Image src={item.image || "/placeholder.svg"} alt={item.name} fill className="object-cover" />
+                      <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-md bg-muted">
+                        <Image src={`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/uploads/${item.image}`} alt={item.name} fill className="object-cover" />
                       </div>
 
                       <div className="flex flex-1 flex-col justify-between">
                         <div className="flex justify-between">
                           <div>
                             <h3 className="font-semibold text-foreground">{item.name}</h3>
-                            <p className="text-sm text-muted-foreground">{item.specs}</p>
+                            <p className="text-sm text-muted-foreground">{item.description}</p>
                           </div>
                           <Button variant="ghost" size="icon" onClick={() => removeItem(item.id)} className="h-8 w-8">
-                            <X className="h-4 w-4" />
+                            <X className="h-4 w-4 cursor-pointer" />
                           </Button>
                         </div>
 
@@ -103,8 +60,8 @@ export default function CartPage() {
                             <Button
                               variant="ghost"
                               size="icon"
-                              onClick={() => updateQuantity(item.id, -1)}
-                              className="h-8 w-8"
+                              onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                              className="h-8 w-8 cursor-pointer"
                             >
                               <Minus className="h-3 w-3" />
                             </Button>
@@ -112,8 +69,8 @@ export default function CartPage() {
                             <Button
                               variant="ghost"
                               size="icon"
-                              onClick={() => updateQuantity(item.id, 1)}
-                              className="h-8 w-8"
+                              onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                              className="h-8 w-8 cursor-pointer"
                             >
                               <Plus className="h-3 w-3" />
                             </Button>
@@ -204,7 +161,7 @@ export default function CartPage() {
                 </div>
               </div>
 
-              <Button className="w-full" size="lg" disabled={cartItems.length === 0}>
+              <Button className="w-full cursor-pointer" size="lg" disabled={items.length === 0}>
                 Order Now
               </Button>
 

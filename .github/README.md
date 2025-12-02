@@ -19,8 +19,8 @@ Master's Thesis project
 - [x] Search page
 - [x] Cart page
 - [x] Login/signup functionality
+- [x] Cart functionality
 - [ ] Link with backend
-- [ ] Cart functionality
 
 ### INFRA
 

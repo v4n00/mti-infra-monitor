@@ -9,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useRouter } from "next/navigation";
 import { useState } from "react"
 import { useAuth } from "@/lib/auth-context"
+import { toast } from "sonner"
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'
 
@@ -39,6 +40,7 @@ export default function LoginPage() {
       if (response.ok) {
         login(data.token)
         router.push("/")
+        toast.success('Logged in successfully')
       } else {
         setError(data.message || 'Login failed')
       }
@@ -77,6 +79,7 @@ export default function LoginPage() {
       if (response.ok) {
         login(data.token)
         router.push("/");
+        toast.success('Account created successfully')
       } else {
         setError(data.message || 'Signup failed')
       }

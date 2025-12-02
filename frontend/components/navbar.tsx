@@ -4,10 +4,12 @@ import Link from "next/link"
 import { ShoppingCart, Search, User, Menu, LogOut } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useAuth } from "@/lib/auth-context"
+import { useCart } from "@/lib/cart-context"
 import { useRouter } from "next/navigation"
 
 export function Navbar() {
   const { user, logout } = useAuth()
+  const { getTotalItems } = useCart()
   const router = useRouter()
 
   const handleLogout = () => {
@@ -82,7 +84,7 @@ export function Navbar() {
               <ShoppingCart className="h-5 w-5" />
               <span className="sr-only">Shopping cart</span>
               <span className="absolute right-1 top-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-semibold text-primary-foreground">
-                0
+                {getTotalItems()}
               </span>
             </Link>
           </Button>
