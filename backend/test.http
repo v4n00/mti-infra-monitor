@@ -1,6 +1,6 @@
-@baseUrl = http://localhost:3000/api
-@email = test1@example.com
-@password = testpassword123
+@baseUrl = http://localhost:2000/api
+@email = test@test.com
+@password = test1234
 
 # --- USER AUTHENTICATION ---
 

@@ -18,7 +18,7 @@ Master's Thesis project
 - [x] Account page
 - [x] Search page
 - [x] Cart page
-- [ ] Stay logged in
+- [x] Login/signup functionality
 - [ ] Link with backend
 
 ### INFRA
