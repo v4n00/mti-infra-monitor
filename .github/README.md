@@ -6,25 +6,47 @@ Master's Thesis project
 
 ### BACKEND
 
-- [x] database
-- [x] controllers
-- [x] basic API
-- [x] tests
-- [x] seed database
+- [x] Database
+- [x] Controllers
+- [x] Basic API
+- [x] Tests
+- [x] Seed database
 
 ### FRONTEND
 
-- [ ] design
-- [ ] link with backend
+- [ ] Home page
+- [ ] Account page
+- [ ] Search page
+- [ ] Cart page
+- [ ] Stay logged in
+- [ ] Link with backend
 
 ### INFRA
 
-WIP
+- [ ] Minikube setup
+- [ ] Dockerfile db
+- [ ] Dockerfile backend
+- [ ] Dockerfile frontend
+- [ ] Kube manifest db
+- [ ] Kube manifest backend
+- [ ] Kube manifest frontend
+- [ ] Kube manifest monitoring
+- [ ] Deploy everything correctly
 
 ### MONITORING
 
-WIP
+- [ ] Everything connected
+- [ ] Prometheus custom metrics
+- [ ] Grafana dashboard
+- [ ] Grafana custom metrics
 
 ### LOAD TESTING
 
-WIP
+- [ ] Write load tests
+- [ ] Ensure scaling works
+
+### Extra
+
+- [ ] VPN
+- [ ] Test connection
+- [ ] Check everything working as intended
