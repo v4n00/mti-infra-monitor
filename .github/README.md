@@ -14,10 +14,10 @@ Master's Thesis project
 
 ### FRONTEND
 
-- [ ] Home page
-- [ ] Account page
-- [ ] Search page
-- [ ] Cart page
+- [x] Home page
+- [x] Account page
+- [x] Search page
+- [x] Cart page
 - [ ] Stay logged in
 - [ ] Link with backend
 
