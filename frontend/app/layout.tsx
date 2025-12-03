@@ -3,6 +3,7 @@ import type { Metadata } from "next"
 import { Geist, Geist_Mono } from "next/font/google"
 import "./globals.css"
 import { AuthProvider } from "@/lib/auth-context"
+import { PublicEnvScript } from 'next-runtime-env';
 import { CartProvider } from "@/lib/cart-context"
 import { Toaster } from "@/components/ui/sonner"
 
@@ -28,6 +29,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <PublicEnvScript />
+      </head>
       <body className={`font-sans antialiased`}>
         <AuthProvider>
           <CartProvider>

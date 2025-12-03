@@ -30,7 +30,7 @@ Master's Thesis project
 - [x] Kube manifest db
 - [x] Kube manifest backend
 - [x] Kube manifest frontend
-- [ ] Everything is connected as expected
+- [ ] Everything is connected as expected - (add database seed docker)
 
 ### MONITORING - 0% / 35%
 

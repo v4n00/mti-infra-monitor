@@ -11,6 +11,8 @@ import { useAuth } from "@/lib/auth-context"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { toast } from "sonner"
+import { env } from 'next-runtime-env';
+const API_BASE_URL = env('NEXT_PUBLIC_API_URL');
 
 export default function CartPage() {
   const { items, updateQuantity, removeItem, getTotalPrice, clearCart } = useCart()
@@ -42,7 +44,7 @@ export default function CartPage() {
         quantity: item.quantity
       }))
 
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/api/orders`, {
+      const response = await fetch(`${API_BASE_URL}/api/orders`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -93,7 +95,7 @@ export default function CartPage() {
                       className="flex gap-4 rounded-lg border border-border bg-card p-4 transition-shadow hover:shadow-md"
                     >
                       <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-md bg-muted">
-                        <Image src={`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/uploads/${item.image}`} alt={item.name} fill className="object-cover" />
+                        <Image src={`${API_BASE_URL}/uploads/${item.image}`} alt={item.name} fill className="object-cover" />
                       </div>
 
                       <div className="flex flex-1 flex-col justify-between">

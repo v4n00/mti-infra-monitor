@@ -9,8 +9,8 @@ import Navbar from "@/components/navbar"
 import { useState, useEffect } from "react"
 import { useCart } from "@/lib/cart-context"
 import { toast } from "sonner"
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'
+import { env } from 'next-runtime-env';
+const API_BASE_URL = env('NEXT_PUBLIC_API_URL');
 
 interface Product {
   id: number

@@ -10,8 +10,8 @@ import { useRouter } from "next/navigation";
 import { useState } from "react"
 import { useAuth } from "@/lib/auth-context"
 import { toast } from "sonner"
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'
+import { env } from 'next-runtime-env';
+const API_BASE_URL = env('NEXT_PUBLIC_API_URL');
 
 export default function LoginPage() {
   const [loginData, setLoginData] = useState({ email: '', password: '' })

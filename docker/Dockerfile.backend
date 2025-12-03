@@ -31,4 +31,8 @@ RUN chown -R nodejs:nodejs /app
 USER nodejs
 
 EXPOSE 2000
+
+ARG BUILD_DATE
+ENV BUILD_DATE=${BUILD_DATE}
+
 CMD ["node", "dist/index.js"]

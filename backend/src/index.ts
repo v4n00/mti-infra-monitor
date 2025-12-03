@@ -8,8 +8,9 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 const app = express();
+const ALLOWED_ORIGINS='*';
 
-app.use(cors());
+app.use(cors({ origin: ALLOWED_ORIGINS }));
 app.use(express.json());
 
 app.use('/api/users', userRoutes);
@@ -22,4 +23,11 @@ const HOSTNAME = process.env.HOSTNAME || "localhost";
 
 app.listen(PORT, HOSTNAME, () => {
   console.log(`Server running on http://${HOSTNAME}:${PORT}`);
+  console.log(`Allowed CORS origins: ${ALLOWED_ORIGINS}`);
+  if (process.env.BUILD_DATE) {
+    console.log(`Build date: ${process.env.BUILD_DATE}`);
+  } else {
+    console.log('Build date not set');
+  }
 });
+
