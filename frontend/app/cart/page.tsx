@@ -7,14 +7,66 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import Navbar from "@/components/navbar"
 import { useCart } from "@/lib/cart-context"
+import { useAuth } from "@/lib/auth-context"
+import { useRouter } from "next/navigation"
+import { useState } from "react"
+import { toast } from "sonner"
 
 export default function CartPage() {
   const { items, updateQuantity, removeItem, getTotalPrice, clearCart } = useCart()
+  const { token } = useAuth()
+  const router = useRouter()
+  const [isOrdering, setIsOrdering] = useState(false)
 
   const subtotal = getTotalPrice()
   const shipping = items.length > 0 ? 15.0 : 0
   const tax = subtotal * 0.08
   const total = subtotal + shipping + tax
+
+  const handleOrder = async () => {
+    console.log('Placing order...')
+
+    // if token doesn't exist, redirect user to login page
+    if (!token) {
+      toast.error('You must be logged in to place an order')
+      router.push('/login')
+      return
+    }
+
+    if (items.length === 0) return
+
+    setIsOrdering(true)
+    try {
+      const orderItems = items.map(item => ({
+        productId: item.id,
+        quantity: item.quantity
+      }))
+
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/api/orders`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({ items: orderItems }),
+      })
+
+      if (!response.ok) {
+        const error = await response.json()
+        throw new Error(error.message || 'Failed to place order')
+      }
+
+      // Clear cart and redirect
+      clearCart()
+      toast.success('Order placed successfully!')
+      router.push('/')
+    } catch (error) {
+      console.error('Order failed:', error)
+      toast.error(error instanceof Error ? error.message : 'Failed to place order')
+    } finally {
+      setIsOrdering(false)
+    }
+  }
 
   return (
     <>
@@ -161,8 +213,13 @@ export default function CartPage() {
                 </div>
               </div>
 
-              <Button className="w-full cursor-pointer" size="lg" disabled={items.length === 0}>
-                Order Now
+              <Button
+                className="w-full cursor-pointer"
+                size="lg"
+                disabled={items.length === 0 || isOrdering}
+                onClick={handleOrder}
+              >
+                {isOrdering ? 'Placing Order...' : 'Order Now'}
               </Button>
 
               <p className="text-center text-xs text-muted-foreground">

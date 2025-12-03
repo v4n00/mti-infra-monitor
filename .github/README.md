@@ -4,7 +4,7 @@ Master's Thesis project
 
 ## TODO
 
-### BACKEND
+### BACKEND - 5% / 5%
 
 - [x] Database
 - [x] Controllers
@@ -12,7 +12,7 @@ Master's Thesis project
 - [x] Tests
 - [x] Seed database
 
-### FRONTEND
+### FRONTEND - 10% / 10%
 
 - [x] Home page
 - [x] Account page
@@ -20,9 +20,9 @@ Master's Thesis project
 - [x] Cart page
 - [x] Login/signup functionality
 - [x] Cart functionality
-- [ ] Order functionality
+- [x] Order functionality
 
-### INFRA
+### INFRA - 0% / 35%
 
 - [ ] Minikube setup
 - [ ] Dockerfile db
@@ -34,20 +34,22 @@ Master's Thesis project
 - [ ] Kube manifest monitoring
 - [ ] Deploy everything correctly
 
-### MONITORING
+### MONITORING - 0% / 35%
 
-- [ ] Everything connected
+- [ ] Connect services
+- [ ] Scaled services auto-connect
 - [ ] Prometheus custom metrics
+- [ ] Grafana queries
 - [ ] Grafana dashboard
-- [ ] Grafana custom metrics
+- [ ] Additional Grafana plugins
 
-### LOAD TESTING
+### LOAD TESTING - 0% / 10%
 
 - [ ] Write load tests
 - [ ] Ensure scaling works
 
-### Extra
+### Extra - 0% / 5%
 
 - [ ] VPN
 - [ ] Test connection
-- [ ] Check everything working as intended
+- [ ] Presentation demo
