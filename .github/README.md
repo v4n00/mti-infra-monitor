@@ -22,17 +22,15 @@ Master's Thesis project
 - [x] Cart functionality
 - [x] Order functionality
 
-### INFRA - 5% / 35%
+### INFRA - 15% / 35%
 
 - [x] Minikube setup
-- [ ] Dockerfile db
-- [ ] Dockerfile backend
-- [ ] Dockerfile frontend
+- [x] Dockerfile backend
+- [x] Dockerfile frontend
 - [ ] Kube manifest db
 - [ ] Kube manifest backend
 - [ ] Kube manifest frontend
-- [ ] Kube manifest monitoring
-- [ ] Deploy everything correctly
+- [ ] Everything is connected as expected
 
 ### MONITORING - 0% / 35%
 

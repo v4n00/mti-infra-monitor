@@ -17,8 +17,9 @@ app.use('/api/products', productRoutes);
 app.use('/api/orders', authenticateToken, orderRoutes);
 app.use('/uploads', express.static('uploads'));
 
-const PORT = process.env.PORT || 2000;
+const PORT = Number(process.env.PORT) || 2000;
+const HOSTNAME = process.env.HOSTNAME || "localhost";
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+app.listen(PORT, HOSTNAME, () => {
+  console.log(`Server running on http://${HOSTNAME}:${PORT}`);
 });
