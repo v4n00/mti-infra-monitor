@@ -60,14 +60,12 @@ export default function ShopPage() {
   const filterAndSortProducts = () => {
     let filtered = products
 
-    // Filter by categories
     if (selectedCategories.length > 0) {
       filtered = filtered.filter(product =>
         selectedCategories.includes(product.category.toLowerCase())
       )
     }
 
-    // Sort products
     switch (sortBy) {
       case 'price-low':
         filtered.sort((a, b) => a.price - b.price)
@@ -76,13 +74,10 @@ export default function ShopPage() {
         filtered.sort((a, b) => b.price - a.price)
         break
       case 'rating':
-        // Since we don't have ratings in backend yet, keep as is
         break
       case 'newest':
-        // Since we don't have dates, keep as is
         break
       default:
-        // featured - keep original order
         break
     }
 

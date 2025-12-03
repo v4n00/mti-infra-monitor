@@ -44,10 +44,10 @@ export default function HomePage() {
             </div>
             <div className="relative aspect-square lg:aspect-auto">
               <Image
-                src="/modern-electronics-tech-devices-showcase.jpg"
+                src="/hero.webp"
                 alt="Featured electronics"
                 width={700}
-                height={700}
+                height={500}
                 className="rounded-lg object-cover"
                 priority
               />

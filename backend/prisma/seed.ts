@@ -2,7 +2,6 @@ import prisma from '../src/config/prisma'
 import bcrypt from 'bcrypt';
 
 async function main() {
-  // user
   await prisma.user.upsert({
     where: { email: 'user1@example.com' },
     update: {},
@@ -12,7 +11,6 @@ async function main() {
     },
   });
 
-  // Create products
   const products = [
     { id: 1, name: 'Laptop', description: 'A powerful laptop for work and gaming', price: 999.99, category: 'Electronics' },
     { id: 2, name: 'VR Headset', description: 'Virtual reality headset for gaming', price: 399.99, category: 'Electronics' },
@@ -39,7 +37,6 @@ async function main() {
     });
   }
 
-  // Create product images (assuming files exist in uploads/)
   const images = [
     { id: 1, productId: 1, filename: 'laptop.webp' },
     { id: 2, productId: 2, filename: 'vr-headset.webp' },

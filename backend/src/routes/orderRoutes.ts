@@ -6,7 +6,7 @@ import prisma from '../config/prisma';
 const router = Router();
 
 router.post('/', async (req: AuthRequest, res: Response) => {
-  const { items } = req.body; // items: [{ productId, quantity }]
+  const { items } = req.body;
 
   if (!req.user || !items || !Array.isArray(items)) {
     return res.status(400).json({ message: 'Invalid request' });

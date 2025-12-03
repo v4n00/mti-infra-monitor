@@ -23,10 +23,3 @@ export const authenticateToken = (req: AuthRequest, res: Response, next: NextFun
     next();
   });
 };
-
-export const requireAdmin = (req: AuthRequest, res: Response, next: NextFunction) => {
-  // For simplicity, assume all authenticated users are not admin unless specified
-  // In a real app, you'd check a role in the user object
-  // For now, skip admin check as requirements don't specify user roles
-  next();
-};

@@ -20,7 +20,7 @@ Master's Thesis project
 - [x] Cart page
 - [x] Login/signup functionality
 - [x] Cart functionality
-- [ ] Link with backend
+- [ ] Order functionality
 
 ### INFRA
 

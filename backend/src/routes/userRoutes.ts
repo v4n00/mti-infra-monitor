@@ -63,13 +63,11 @@ router.get('/validate', authenticateToken, async (req: AuthRequest, res) => {
   }
 
   try {
-    // Check if user still exists
     const user = await prisma.user.findUnique({ where: { id: req.user.id } });
     if (!user) {
       return res.status(401).json({ message: 'User not found' });
     }
 
-    // Generate new token
     const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET);
     res.json({ token, user: { id: user.id, email: user.email } });
   } catch (error) {

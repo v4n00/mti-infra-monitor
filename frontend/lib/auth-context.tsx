@@ -39,9 +39,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             const data = await response.json();
             setToken(data.token);
             setUser(data.user);
-            localStorage.setItem('token', data.token); // Update with fresh token
+            localStorage.setItem('token', data.token);
           } else {
-            // Token is invalid, remove it
             localStorage.removeItem('token');
           }
         } catch (error) {
@@ -58,7 +57,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const login = (newToken: string) => {
     setToken(newToken);
     localStorage.setItem('token', newToken);
-    // Decode token to get user info (simple decode, not secure validation)
     try {
       const payload = JSON.parse(atob(newToken.split('.')[1]));
       setUser({ id: payload.id, email: payload.email });
