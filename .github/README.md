@@ -22,9 +22,9 @@ Master's Thesis project
 - [x] Cart functionality
 - [x] Order functionality
 
-### INFRA - 0% / 35%
+### INFRA - 5% / 35%
 
-- [ ] Minikube setup
+- [x] Minikube setup
 - [ ] Dockerfile db
 - [ ] Dockerfile backend
 - [ ] Dockerfile frontend
