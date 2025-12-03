@@ -2,7 +2,7 @@
 
 Master's Thesis project
 
-## TODO
+## TODO - 45% / 100%
 
 ### BACKEND - 5% / 5%
 
@@ -22,18 +22,19 @@ Master's Thesis project
 - [x] Cart functionality
 - [x] Order functionality
 
-### INFRA - 15% / 35%
+### INFRA - 30% / 35%
 
 - [x] Minikube setup
 - [x] Dockerfile backend
 - [x] Dockerfile frontend
-- [ ] Kube manifest db
-- [ ] Kube manifest backend
-- [ ] Kube manifest frontend
+- [x] Kube manifest db
+- [x] Kube manifest backend
+- [x] Kube manifest frontend
 - [ ] Everything is connected as expected
 
 ### MONITORING - 0% / 35%
 
+- [ ] Add monitoring to infra
 - [ ] Connect services
 - [ ] Scaled services auto-connect
 - [ ] Prometheus custom metrics
