@@ -44,6 +44,8 @@ spec:
                   key: POSTGRES_PASSWORD
             - name: PORT
               value: "2000"
+            - name: HOST_LISTEN
+              value: "0.0.0.0"
 
 ---
 apiVersion: v1

@@ -254,7 +254,7 @@ export default function ShopPage() {
                 >
                   <div className="aspect-square overflow-hidden bg-muted">
                     <img
-                      src={product.images.length > 0 ? `${API_BASE_URL}/uploads/${product.images[0].filename}` : "/placeholder.svg"}
+                      src={product.images.length > 0 ? `${API_BASE_URL}/api/uploads/${product.images[0].filename}` : "/placeholder.svg"}
                       alt={product.name}
                       className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105 aspect-square"
                     />

@@ -95,7 +95,7 @@ export default function CartPage() {
                       className="flex gap-4 rounded-lg border border-border bg-card p-4 transition-shadow hover:shadow-md"
                     >
                       <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-md bg-muted">
-                        <Image src={`${API_BASE_URL}/uploads/${item.image}`} alt={item.name} fill className="object-cover" />
+                        <Image src={`${API_BASE_URL}/api/uploads/${item.image}`} alt={item.name} fill className="object-cover" />
                       </div>
 
                       <div className="flex flex-1 flex-col justify-between">
