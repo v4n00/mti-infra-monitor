@@ -22,7 +22,7 @@ Master's Thesis project
 - [x] Cart functionality
 - [x] Order functionality
 
-### INFRA - 30% / 35%
+### INFRA - 25% / 30%
 
 - [x] Minikube setup
 - [x] Dockerfile backend
@@ -30,7 +30,7 @@ Master's Thesis project
 - [x] Kube manifest db
 - [x] Kube manifest backend
 - [x] Kube manifest frontend
-- [ ] Everything is connected as expected - (add database seed docker)
+- [ ] Everything is connected as expected
 
 ### MONITORING - 0% / 35%
 

@@ -1,0 +1,17 @@
+# Database Seeder Dockerfile
+FROM node:24-alpine AS base
+
+# Install pnpm
+RUN npm install -g pnpm
+
+# Set working directory
+WORKDIR /app
+
+# Copy backend source code
+COPY . .
+
+# Install dependencies
+RUN pnpm install
+
+# Run the seeding command
+CMD ["pnpm", "run", "prisma-reset"]
