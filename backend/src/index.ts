@@ -5,6 +5,7 @@ import productRoutes from './routes/productRoutes';
 import orderRoutes from './routes/orderRoutes';
 import { authenticateToken } from './middleware/auth';
 import dotenv from 'dotenv';
+import { httpMetricsMiddleware, metricsHandler } from './monitoring';
 
 dotenv.config();
 const app = express();
@@ -18,6 +19,10 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 app.use(express.json());
+
+// monitor
+app.use(httpMetricsMiddleware);
+app.get("/metrics", metricsHandler);
 
 app.use('/api/users', userRoutes);
 app.use('/api/products', productRoutes);

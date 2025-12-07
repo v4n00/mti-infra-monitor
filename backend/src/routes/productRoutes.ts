@@ -1,16 +1,25 @@
 import { Router, Request, Response } from 'express';
 import prisma from '../config/prisma';
 
+// Import metrics
+import { productsViewedTotal, trackDbQuery } from '../monitoring';
+
 const router = Router();
 
 router.get('/', async (req: Request, res: Response) => {
   const { category } = req.query;
 
   try {
-    const products = await prisma.product.findMany({
-      where: category ? { category: (category as string).toLowerCase() } : {},
-      include: { images: true },
-    });
+    const products = await trackDbQuery('product_findMany', () => 
+      prisma.product.findMany({
+        where: category ? { category: (category as string).toLowerCase() } : {},
+        include: { images: true },
+      })
+    );
+
+    // Track product views (count all products returned)
+    productsViewedTotal.inc(products.length);
+
     res.json(products);
   } catch (error) {
     res.status(500).json({ message: 'Internal server error' });
@@ -21,13 +30,19 @@ router.get('/', async (req: Request, res: Response) => {
 router.get('/:id', async (req: Request, res: Response) => {
   const { id } = req.params;
   try {
-    const product = await prisma.product.findUnique({
-      where: { id: parseInt(id) },
-      include: { images: true },
-    });
+    const product = await trackDbQuery('product_findUnique', () => 
+      prisma.product.findUnique({
+        where: { id: parseInt(id) },
+        include: { images: true },
+      })
+    );
     if (!product) {
       return res.status(404).json({ message: 'Product not found' });
     }
+
+    // Track individual product view
+    productsViewedTotal.inc();
+
     res.json(product);
   } catch (error) {
     res.status(500).json({ message: 'Internal server error' });
