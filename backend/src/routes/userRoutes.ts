@@ -10,7 +10,7 @@ const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 // Import metrics from monitoring module
 import { userRegistrationsTotal, loginAttemptsTotal, activeUsers, trackDbQuery } from '../monitoring';
 
-router.post('/signup', async (req, res) => {
+router.post('/signup', async (req, res, next) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
@@ -40,11 +40,11 @@ router.post('/signup', async (req, res) => {
 
     res.status(201).json({ token });
   } catch (error) {
-    res.status(500).json({ message: `Internal server error ${error}` });
+    next(error);
   }
 });
 
-router.post('/login', async (req, res) => {
+router.post('/login', async (req, res, next) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
@@ -75,11 +75,11 @@ router.post('/login', async (req, res) => {
     res.json({ token });
   } catch (error) {
     loginAttemptsTotal.inc({ success: 'false' });
-    res.status(500).json({ message: 'Internal server error' });
+    next(error);
   }
 });
 
-router.get('/validate', authenticateToken, async (req: AuthRequest, res) => {
+router.get('/validate', authenticateToken, async (req: AuthRequest, res, next) => {
   if (!req.user) {
     return res.status(401).json({ message: 'Unauthorized' });
   }
@@ -95,7 +95,7 @@ router.get('/validate', authenticateToken, async (req: AuthRequest, res) => {
     const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET);
     res.json({ token, user: { id: user.id, email: user.email } });
   } catch (error) {
-    res.status(500).json({ message: 'Internal server error' });
+    next(error);
   }
 });
 

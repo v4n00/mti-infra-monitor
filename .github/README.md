@@ -2,7 +2,7 @@
 
 Master's Thesis project
 
-## TODO - 45% / 100%
+## TODO - 50% / 100%
 
 ### BACKEND - 5% / 5%
 
@@ -32,20 +32,24 @@ Master's Thesis project
 - [x] Kube manifest frontend
 - [x] Everything is connected as expected
 
-### MONITORING - 0% / 35%
+### MONITORING - 10% / 35%
 
-- [ ] Add monitoring to infra
-- [ ] Connect services
-- [ ] Scaled services auto-connect
-- [ ] Prometheus custom metrics
-- [ ] Grafana queries
-- [ ] Grafana dashboard
+- [x] Prometheus + node_exporter
+- [x] Grafana install
+- [x] Backend metrics
+- [ ] Frontend metrics
+- [ ] Postgres metrics
+- [ ] Logging w/ Loki and Promtail
+- [ ] Scrape logs
+- [ ] Postgres exporter
+- [ ] Grafana dashboards - 10%
+- [ ] Grafana alerts
 - [ ] Additional Grafana plugins
 
 ### LOAD TESTING - 0% / 10%
 
+- [ ] Horizontal scaling
 - [ ] Write load tests
-- [ ] Ensure scaling works
 
 ### Extra - 0% / 5%
 

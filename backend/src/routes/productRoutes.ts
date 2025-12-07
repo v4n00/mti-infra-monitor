@@ -6,7 +6,7 @@ import { productsViewedTotal, trackDbQuery } from '../monitoring';
 
 const router = Router();
 
-router.get('/', async (req: Request, res: Response) => {
+router.get('/', async (req: Request, res: Response, next) => {
   const { category } = req.query;
 
   try {
@@ -22,12 +22,11 @@ router.get('/', async (req: Request, res: Response) => {
 
     res.json(products);
   } catch (error) {
-    res.status(500).json({ message: 'Internal server error' });
-    console.error(error);
+    next(error);
   }
 });
 
-router.get('/:id', async (req: Request, res: Response) => {
+router.get('/:id', async (req: Request, res: Response, next) => {
   const { id } = req.params;
   try {
     const product = await trackDbQuery('product_findUnique', () => 
@@ -45,7 +44,7 @@ router.get('/:id', async (req: Request, res: Response) => {
 
     res.json(product);
   } catch (error) {
-    res.status(500).json({ message: 'Internal server error' });
+    next(error);
   }
 });
 

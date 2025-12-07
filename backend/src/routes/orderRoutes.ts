@@ -7,7 +7,7 @@ import { ordersTotal, trackDbQuery } from '../monitoring';
 
 const router = Router();
 
-router.post('/', async (req: AuthRequest, res: Response) => {
+router.post('/', async (req: AuthRequest, res: Response, next) => {
   const { items } = req.body;
 
   if (!req.user || !items || !Array.isArray(items)) {
@@ -39,11 +39,11 @@ router.post('/', async (req: AuthRequest, res: Response) => {
 
     res.status(201).json(order);
   } catch (error) {
-    res.status(500).json({ message: `Internal server error ${error}` });
+    next(error);
   }
 });
 
-router.get('/', async (req: AuthRequest, res: Response) => {
+router.get('/', async (req: AuthRequest, res: Response, next) => {
   if (!req.user) {
     return res.status(401).json({ message: 'Unauthorized' });
   }
@@ -57,7 +57,7 @@ router.get('/', async (req: AuthRequest, res: Response) => {
     );
     res.json(orders);
   } catch (error) {
-    res.status(500).json({ message: 'Internal server error' });
+    next(error);
   }
 });
 
