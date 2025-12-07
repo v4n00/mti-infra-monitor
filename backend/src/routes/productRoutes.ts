@@ -2,7 +2,7 @@ import { Router, Request, Response } from 'express';
 import prisma from '../config/prisma';
 
 // Import metrics
-import { productsViewedTotal, trackDbQuery } from '../monitoring';
+import { trackDbQuery } from '../monitoring';
 
 const router = Router();
 
@@ -16,9 +16,6 @@ router.get('/', async (req: Request, res: Response, next) => {
         include: { images: true },
       })
     );
-
-    // Track product views (count all products returned)
-    productsViewedTotal.inc(products.length);
 
     res.json(products);
   } catch (error) {
@@ -38,9 +35,6 @@ router.get('/:id', async (req: Request, res: Response, next) => {
     if (!product) {
       return res.status(404).json({ message: 'Product not found' });
     }
-
-    // Track individual product view
-    productsViewedTotal.inc();
 
     res.json(product);
   } catch (error) {

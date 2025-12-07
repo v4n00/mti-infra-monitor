@@ -1,6 +1,5 @@
 import client from "prom-client";
 
-// Prometheus metrics setup
 const register = client.register;
 
 // HTTP request metrics
@@ -17,35 +16,20 @@ export const httpRequestDuration = new client.Histogram({
   buckets: [0.1, 0.5, 1, 2, 5, 10],
 });
 
-// Business metrics
-export const ordersTotal = new client.Counter({
-  name: 'orders_total',
-  help: 'Total number of orders placed',
+export const httpErrorTotal = new client.Counter({
+  name: 'http_errors_total',
+  help: 'Total number of HTTP errors',
+  labelNames: ['method', 'route', 'status_code'],
 });
 
-export const productsViewedTotal = new client.Counter({
-  name: 'products_viewed_total',
-  help: 'Total number of product views',
-});
-
-export const userRegistrationsTotal = new client.Counter({
-  name: 'user_registrations_total',
-  help: 'Total number of user registrations',
-});
-
+// user metrics
 export const loginAttemptsTotal = new client.Counter({
   name: 'login_attempts_total',
   help: 'Total number of login attempts',
   labelNames: ['success'],
 });
 
-// Active users gauge
-export const activeUsers = new client.Gauge({
-  name: 'active_users',
-  help: 'Number of currently active users',
-});
-
-// Database operation metrics
+// database operation metrics
 export const dbQueryDuration = new client.Histogram({
   name: 'db_query_duration_seconds',
   help: 'Duration of database queries',
@@ -59,34 +43,34 @@ export const dbQueryTotal = new client.Counter({
   labelNames: ['operation', 'success'],
 });
 
-// Collect default metrics
 client.collectDefaultMetrics();
 
-// Database query wrapper for metrics
-export function trackDbQuery<T>(
+// database query wrapper for metrics
+export async function trackDbQuery<T>(
   operation: string,
   queryFn: () => Promise<T>
 ): Promise<T> {
   const start = Date.now();
-  return queryFn()
-    .then(result => {
-      const duration = (Date.now() - start) / 1000;
-      dbQueryDuration.observe({ operation }, duration);
-      dbQueryTotal.inc({ operation, success: 'true' });
-      return result;
-    })
-    .catch(error => {
-      const duration = (Date.now() - start) / 1000;
-      dbQueryDuration.observe({ operation }, duration);
-      dbQueryTotal.inc({ operation, success: 'false' });
-      throw error;
-    });
+  try {
+    const result_2 = await queryFn();
+    const duration = (Date.now() - start) / 1000;
+    dbQueryDuration.observe({ operation }, duration);
+    dbQueryTotal.inc({ operation, success: 'true' });
+    return result_2;
+  } catch (error) {
+    const duration_1 = (Date.now() - start) / 1000;
+    dbQueryDuration.observe({ operation }, duration_1);
+    dbQueryTotal.inc({ operation, success: 'false' });
+    throw error;
+  }
 }
 
 // HTTP metrics middleware
 export function httpMetricsMiddleware(req: any, res: any, next: any) {
   const start = Date.now();
-  const { method, originalUrl } = req;
+  const { method, originalUrl, ip } = req;
+
+  console.log(`[${new Date().toISOString()}] ${method} ${originalUrl} - ${ip}`);
 
   const route = originalUrl.split('?')[0].replace(/\/\d+/g, '/:id');
 
@@ -94,12 +78,30 @@ export function httpMetricsMiddleware(req: any, res: any, next: any) {
     const duration = (Date.now() - start) / 1000;
     httpRequestTotal.inc({ method, route, status_code: res.statusCode });
     httpRequestDuration.observe({ method, route }, duration);
+    console.log(`[${new Date().toISOString()}] ${method} ${originalUrl} - ${res.statusCode} - ${duration}ms`);
   });
 
   next();
 }
 
-// Metrics endpoint handler
+// error handling
+export function httpErrorHandler(err: any, req: any, res: any, next: any) {
+  const { method, originalUrl, ip } = req;
+  const timestamp = new Date().toISOString();
+
+  console.error(`[${timestamp}] ERROR ${method} ${originalUrl} - ${ip}`);
+  console.error(`[${timestamp}] Message: ${err.message}`);
+  console.error(`[${timestamp}] Stack: ${err.stack}`);
+
+  httpErrorTotal.inc({ method, route: originalUrl.split('?')[0].replace(/\/\d+/g, '/:id'), status_code: res.statusCode });
+  
+  res.status(500).json({ 
+    message: 'Internal server error',
+    ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
+  });
+}
+
+// metrics endpoint handler
 export async function metricsHandler(_req: any, res: any) {
   res.set("Content-Type", register.contentType);
   res.end(await register.metrics());

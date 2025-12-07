@@ -3,7 +3,7 @@ import { AuthRequest } from '../middleware/auth';
 import prisma from '../config/prisma';
 
 // Import metrics
-import { ordersTotal, trackDbQuery } from '../monitoring';
+import { trackDbQuery } from '../monitoring';
 
 const router = Router();
 
@@ -33,9 +33,6 @@ router.post('/', async (req: AuthRequest, res: Response, next) => {
         include: { orderItems: { include: { product: true } } },
       })
     );
-
-    // Track successful order creation
-    ordersTotal.inc();
 
     res.status(201).json(order);
   } catch (error) {

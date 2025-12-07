@@ -8,7 +8,7 @@ const router = Router();
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 
 // Import metrics from monitoring module
-import { userRegistrationsTotal, loginAttemptsTotal, activeUsers, trackDbQuery } from '../monitoring';
+import { loginAttemptsTotal, trackDbQuery } from '../monitoring';
 
 router.post('/signup', async (req, res, next) => {
   const { email, password } = req.body;
@@ -33,10 +33,6 @@ router.post('/signup', async (req, res, next) => {
     );
 
     const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET);
-
-    // Track successful user registration
-    userRegistrationsTotal.inc();
-    activeUsers.inc();
 
     res.status(201).json({ token });
   } catch (error) {

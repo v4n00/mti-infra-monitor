@@ -41,7 +41,6 @@ Master's Thesis project
 - [ ] Postgres metrics
 - [ ] Logging w/ Loki and Promtail
 - [ ] Scrape logs
-- [ ] Postgres exporter
 - [ ] Grafana dashboards - 10%
 - [ ] Grafana alerts
 - [ ] Additional Grafana plugins
