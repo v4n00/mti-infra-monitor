@@ -51,18 +51,3 @@ spec:
     - name: http
       port: 9187
       targetPort: 9187
-
----
-apiVersion: monitoring.coreos.com/v1
-kind: ServiceMonitor
-metadata:
-  name: postgres-exporter
-  labels:
-    release: k8s-monitoring
-spec:
-  selector:
-    matchLabels:
-      app: postgres-exporter
-  endpoints:
-    - port: http
-      interval: 15s
