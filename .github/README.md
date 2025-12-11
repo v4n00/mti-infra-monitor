@@ -22,7 +22,7 @@ Master's Thesis project
 - [x] Cart functionality
 - [x] Order functionality
 
-### INFRA - 30% / 30%
+### INFRA - 35% / 35%
 
 - [x] Minikube setup
 - [x] Dockerfile backend
@@ -30,9 +30,10 @@ Master's Thesis project
 - [x] Kube manifest db
 - [x] Kube manifest backend
 - [x] Kube manifest frontend
+- [x] Horizontal autoscaling
 - [x] Everything is connected as expected
 
-### MONITORING - 20% / 35%
+### MONITORING - 20% / 40%
 
 - [x] Prometheus + node_exporter
 - [x] Grafana install
@@ -40,17 +41,15 @@ Master's Thesis project
 - [x] Postgres metrics
 - [x] Logging w/ Loki and Promtail
 - [x] Scrape logs
-- [ ] Grafana dashboards - 10%
+- [ ] Grafana dashboards
 - [ ] Grafana alerts
-- [ ] Additional Grafana plugins
-- [ ] Frontend metrics
+- [ ] Grafana Tempo
+- [ ] Grafana k6
+- [ ] Load tests
 
-### LOAD TESTING - 0% / 10%
-
-- [ ] Horizontal scaling
-- [ ] Write load tests
-
-### Extra - 0% / 5%
+### EXTRA - 0% / 10%
 
 - [ ] VPN
+- [ ] CI/CD
 - [ ] Presentation demo
+- [ ] Write Grafana/Prometheus/Loki

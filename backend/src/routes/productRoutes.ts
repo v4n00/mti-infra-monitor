@@ -1,8 +1,6 @@
 import { Router, Request, Response } from 'express';
 import prisma from '../config/prisma';
-
-// Import metrics
-import { trackDbQuery } from '../monitoring';
+import { httpErrorTotal, trackDbQuery } from '../monitoring';
 
 const router = Router();
 
@@ -33,6 +31,8 @@ router.get('/:id', async (req: Request, res: Response, next) => {
       })
     );
     if (!product) {
+      httpErrorTotal.inc({ method: req.method, route: '/products/:id', status_code: 404 });
+      console.error(`[${new Date().toISOString()}] Product not found with id: ${id}`);
       return res.status(404).json({ message: 'Product not found' });
     }
 

@@ -7,6 +7,7 @@ PROJECT_HOME="$(dirname "$SCRIPT_DIR")"
 BUILD_BACKEND=false
 BUILD_FRONTEND=false
 BUILD_SEEDER=false
+BUILD_TRAFFIC=false
 DEPLOY=false
 BUILD_DATE="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 
@@ -21,6 +22,7 @@ usage() {
     echo "  -s, --seeder      Build seeder image"
     echo "  -a, --all         Build all images (default if no build options specified)"
     echo "  -d, --deploy      Deploy built components to Kubernetes"
+    echo "  -t, --traffic     Build traffic generator image"
     echo "  -h, --help        Show this help message"
     echo ""
     echo "Examples:"
@@ -48,10 +50,15 @@ while [[ $# -gt 0 ]]; do
             BUILD_SEEDER=true
             shift
             ;;
+        -t|--traffic)
+            BUILD_TRAFFIC=true
+            shift
+            ;;
         -a|--all)
             BUILD_BACKEND=true
             BUILD_FRONTEND=true
             BUILD_SEEDER=true
+            BUILD_TRAFFIC=true
             shift
             ;;
         -d|--deploy)
@@ -68,17 +75,18 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-if [[ "$BUILD_BACKEND" == "false" && "$BUILD_FRONTEND" == "false" && "$BUILD_SEEDER" == "false" ]]; then
+if [[ "$BUILD_BACKEND" == "false" && "$BUILD_FRONTEND" == "false" && "$BUILD_SEEDER" == "false" && "$BUILD_TRAFFIC" == "false" ]]; then
     BUILD_BACKEND=true
     BUILD_FRONTEND=true
     BUILD_SEEDER=true
+    BUILD_TRAFFIC=true
 fi
 
 echo "🚀 Starting build process at $BUILD_DATE"
 echo "📁 Project home: $PROJECT_HOME"
 echo "📁 Script location: $SCRIPT_DIR"
-echo "Build options: Backend=$BUILD_BACKEND, Frontend=$BUILD_FRONTEND, Seeder=$BUILD_SEEDER, Deploy=$DEPLOY"
-eval $(minikube -p minikube docker-env) # Use minikube's Docker daemon
+echo "Build options: Backend=$BUILD_BACKEND, Frontend=$BUILD_FRONTEND, Seeder=$BUILD_SEEDER, Traffic=$BUILD_TRAFFIC, Deploy=$DEPLOY"
+eval $(minikube -p minikube docker-env)
 
 # backend
 if [[ "$BUILD_BACKEND" == "true" ]]; then
@@ -99,6 +107,13 @@ if [[ "$BUILD_SEEDER" == "true" ]]; then
     echo "📦 Building seeder image..."
     docker build -t ecommerce-seeder -f "$SCRIPT_DIR/Dockerfile.seeder" "$PROJECT_HOME/backend"
     echo "✅ Seeder image built successfully"
+fi
+
+# traffic generator
+if [[ "$BUILD_TRAFFIC" == "true" ]]; then
+    echo "📦 Building traffic generator image..."
+    docker build -t ecommerce-traffic -f "$SCRIPT_DIR/Dockerfile.traffic" "$PROJECT_HOME/traffic-generator"
+    echo "✅ Traffic generator image built successfully"
 fi
 
 echo "🎉 All requested images built successfully at $(date -u +%Y-%m-%dT%H:%M:%SZ)"
@@ -143,6 +158,13 @@ if [[ "$DEPLOY" == "true" ]]; then
         kubectl apply -f "$PROJECT_HOME/k8s/app/frontend.yaml"
         kubectl rollout restart deployment frontend
         echo "✅ Frontend deployed"
+    fi
+
+    # traffic generator
+    if [[ "$BUILD_TRAFFIC" == "true" ]]; then
+        kubectl apply -f "$PROJECT_HOME/k8s/app/traffic-generator.yaml"
+        kubectl rollout restart deployment traffic-generator
+        echo "✅ Traffic generator deployed"
     fi
 
     kubectl apply -f "$PROJECT_HOME/k8s/app/ingress.yaml"

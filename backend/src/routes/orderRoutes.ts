@@ -3,7 +3,7 @@ import { AuthRequest } from '../middleware/auth';
 import prisma from '../config/prisma';
 
 // Import metrics
-import { trackDbQuery } from '../monitoring';
+import { httpErrorTotal, trackDbQuery } from '../monitoring';
 
 const router = Router();
 
@@ -11,10 +11,14 @@ router.post('/', async (req: AuthRequest, res: Response, next) => {
   const { items } = req.body;
 
   if (!req.user || !items || !Array.isArray(items)) {
+    httpErrorTotal.inc({ method: req.method, route: '/orders', status_code: 400 });
+    console.error(`[${new Date().toISOString()}] Invalid order creation request`);
     return res.status(400).json({ message: 'Invalid request' });
   }
 
   if (items.some((item: any) => !item.productId || !item.quantity)) {
+    httpErrorTotal.inc({ method: req.method, route: '/orders', status_code: 400 });
+    console.error(`[${new Date().toISOString()}] Each item must have productId and quantity`);
     return res.status(400).json({ message: 'Each item must have productId and quantity' });
   }
 
@@ -42,6 +46,8 @@ router.post('/', async (req: AuthRequest, res: Response, next) => {
 
 router.get('/', async (req: AuthRequest, res: Response, next) => {
   if (!req.user) {
+    httpErrorTotal.inc({ method: req.method, route: '/orders', status_code: 401 });
+    console.error(`[${new Date().toISOString()}] Unauthorized access attempt to /orders`);
     return res.status(401).json({ message: 'Unauthorized' });
   }
 
