@@ -13,7 +13,7 @@ export const httpRequestDuration = new client.Histogram({
   name: 'http_request_duration_seconds',
   help: 'Duration of HTTP requests in seconds',
   labelNames: ['method', 'route'],
-  buckets: [0.1, 0.5, 1, 2, 5, 10],
+  buckets: [0.0005, 0.001, 0.002, 0.005, 0.01, 0.05, 0.1, 0.5, 1, 2, 5],
 });
 
 export const httpErrorTotal = new client.Counter({
@@ -34,7 +34,7 @@ export const dbQueryDuration = new client.Histogram({
   name: 'db_query_duration_seconds',
   help: 'Duration of database queries',
   labelNames: ['operation'],
-  buckets: [0.01, 0.05, 0.1, 0.5, 1, 2],
+  buckets: [0.0001, 0.0005, 0.001, 0.002, 0.005, 0.01, 0.1, 0.5, 1, 2, 5],
 });
 
 export const dbQueryTotal = new client.Counter({
@@ -78,7 +78,7 @@ export function httpMetricsMiddleware(req: any, res: any, next: any) {
     const duration = (Date.now() - start) / 1000;
     httpRequestTotal.inc({ method, route, status_code: res.statusCode });
     httpRequestDuration.observe({ method, route }, duration);
-    console.log(`[${new Date().toISOString()}] ${method} ${originalUrl} - ${res.statusCode} - ${duration}ms`);
+    console.log(`[${new Date().toISOString()}] ${method} ${originalUrl} - ${res.statusCode} - ${duration}s`);
   });
 
   next();
@@ -93,7 +93,7 @@ export function httpErrorHandler(err: any, req: any, res: any, next: any) {
   console.error(`[${timestamp}] Message: ${err.message}`);
   console.error(`[${timestamp}] Stack: ${err.stack}`);
 
-  httpErrorTotal.inc({ method, route: originalUrl.split('?')[0].replace(/\/\d+/g, '/:id'), status_code: res.statusCode });
+  httpErrorTotal.inc({ method, route: originalUrl.split('?')[0].replace(/\/\d+/g, '/:id'), status_code: 500 });
   
   res.status(500).json({ 
     message: 'Internal server error',

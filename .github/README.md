@@ -2,7 +2,7 @@
 
 Master's Thesis project
 
-## TODO - 65% / 100%
+## TODO - 65% / 125%
 
 ### BACKEND - 5% / 5%
 
@@ -33,7 +33,7 @@ Master's Thesis project
 - [x] Horizontal autoscaling
 - [x] Everything is connected as expected
 
-### MONITORING - 20% / 40%
+### MONITORING - 20% / 50%
 
 - [x] Prometheus + node_exporter
 - [x] Grafana install
@@ -41,15 +41,23 @@ Master's Thesis project
 - [x] Postgres metrics
 - [x] Logging w/ Loki and Promtail
 - [x] Scrape logs
-- [ ] Grafana dashboards
+- [x] Traffic simulation
+- [ ] Grafana dashboard
+    - [x] Backend metrics
+    - [x] Postgres metrics
+    - [ ] Kubernetes metrics
+    - [ ] Per Service metrics
+    - [ ] Loki metrics
 - [ ] Grafana alerts
 - [ ] Grafana Tempo
 - [ ] Grafana k6
 - [ ] Load tests
 
-### EXTRA - 0% / 10%
+### EXTRA - 0% / 25%
 
 - [ ] VPN
-- [ ] CI/CD
 - [ ] Presentation demo
+- [ ] CI/CD
 - [ ] Write Grafana/Prometheus/Loki
+- [ ] README.md
+

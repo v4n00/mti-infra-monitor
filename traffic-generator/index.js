@@ -102,6 +102,13 @@ const requestFrontend = async () => {
     });
 }
 
+const chaosCacheMiss = async () => {
+    const randomId = Math.floor(Math.random() * 1000000) + 1000; 
+    await fetch(`${backendurl}/api/products/${randomId}`, {
+        method: 'GET',
+    }).catch(() => {});
+}
+
 const spike = async (fn, baseIntervalMs, spikeDurationMs, spikeIntervalMs, spikeIntervalRandom) => {
     while (true) {
         await new Promise(resolve => setTimeout(resolve, spikeIntervalMs * 1000 + getRandomMs(0, spikeIntervalRandom * 1000)));
@@ -116,7 +123,7 @@ const spike = async (fn, baseIntervalMs, spikeDurationMs, spikeIntervalMs, spike
 }
 
 const runRandomMs = async (fn, baseMinInterval, baseMaxInterval) => {
-    spike(fn, baseMinInterval / 5, 7, 1200, 600);
+    spike(fn, baseMinInterval / 5, 5, 1200, 600);
     spike(fn, 2, 5, 300, 200);
     while (true) {
         await fn();
@@ -136,7 +143,7 @@ const main = async () => {
     await login(globalEmail, globalPassword);
 
     runRandomMs(async () => await register(), 15, 25);
-    runRandomMs(async () => await login(globalEmail, globalPassword), 4, 20);
+    runRandomMs(async () => await login(globalEmail, globalPassword), 2, 15);
     runRandomMs(async () => await login("aaa", "bbb"), 60, 90);
     runRandomMs(async () => await validate(token), 3, 11);
     runRandomMs(async () => await getProducts(), 5, 15);
@@ -146,6 +153,7 @@ const main = async () => {
     runRandomMs(async () => await getOrders(token), 20, 25);
     runRandomMs(async () => await getOrders("invalidtoken"), 40, 60);
     runRandomMs(async () => await requestFrontend(), 1, 3);
+    runRandomMs(async () => await getProduct("test"), 30, 100);
 
     console.log("Traffic generator started");
 }
