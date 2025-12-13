@@ -96,8 +96,8 @@ const getOrders = async (token) => {
     });
 }
 
-const requestFrontend = async () => {
-    await fetch(`${frontendurl}/`,  {
+const requestFrontend = async (url) => {
+    await fetch(`${frontendurl}/${url}`,  {
         method: 'GET',
     });
 }
@@ -152,7 +152,11 @@ const main = async () => {
     runRandomMs(async () => await setOrder("invalidtoken"), 20, 40);
     runRandomMs(async () => await getOrders(token), 20, 25);
     runRandomMs(async () => await getOrders("invalidtoken"), 40, 60);
-    runRandomMs(async () => await requestFrontend(), 1, 3);
+    runRandomMs(async () => await requestFrontend(""), 5, 10);
+    runRandomMs(async () => await requestFrontend("shop"), 10, 15);
+    runRandomMs(async () => await requestFrontend("cart"), 20, 25);
+    runRandomMs(async () => await requestFrontend("login"), 7, 13);
+    runRandomMs(async () => await requestFrontend("test"), 60, 90);
     runRandomMs(async () => await getProduct("test"), 30, 100);
 
     console.log("Traffic generator started");

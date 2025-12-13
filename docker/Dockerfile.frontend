@@ -42,6 +42,11 @@ COPY --from=builder --chown=nextjs:nextjs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nextjs /app/.next/static ./.next/static
 COPY package.json ./package.json
 
+RUN sed -Ei \
+    -e '/await requestHandler/iconst __start = new Date;' \
+    -e '/await requestHandler/aconsole.log(`-- [${__start.toISOString()}] ${((new Date - __start) / 1000).toFixed(3)} ${req.method} ${req.url}`);' \
+    node_modules/next/dist/server/lib/start-server.js
+
 # Switch to non-root user
 USER nextjs
 
