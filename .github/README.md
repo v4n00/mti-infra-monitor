@@ -2,7 +2,7 @@
 
 Master's Thesis project
 
-## TODO - 80% / 125%
+## TODO - 80% / 130%
 
 ### BACKEND - 5% / 5%
 
@@ -53,10 +53,11 @@ Master's Thesis project
 - [ ] Grafana k6
 - [ ] Load tests
 
-### EXTRA - 0% / 25%
+### EXTRA - 0% / 30%
 
 - [ ] VPN
 - [ ] Presentation demo
+- [ ] Host
 - [ ] CI/CD
 - [ ] Write Grafana/Prometheus/Loki
 - [ ] README.md
