@@ -1,3 +1,7 @@
 grafana:
   adminUser: admin
   adminPassword: admin
+
+alertmanager:
+  alertmanagerSpec:
+    configSecret: alertmanager-config

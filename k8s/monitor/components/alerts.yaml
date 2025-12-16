@@ -4,8 +4,8 @@ metadata:
   name: system-alerts
   namespace: default
   labels:
-    release: kube-prometheus-stack
-    role: alert-rules
+    app: kube-prometheus-stack
+    release: k8s-monitoring
 spec:
   groups:
   - name: backend-alerts
@@ -181,7 +181,7 @@ spec:
   - name: business-metrics-alerts
     rules:
     - alert: HighFailedLoginRate
-      expr: rate(login_attempts_total{status="failed"}[5m]) / rate(login_attempts_total[5m]) * 100 > 20
+      expr: sum(rate(login_attempts_total{success="false"}[1m])) / sum(rate(login_attempts_total[1m])) * 100 > 30
       for: 5m
       labels:
         severity: warning
