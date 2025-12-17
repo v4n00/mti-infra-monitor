@@ -10,6 +10,15 @@ PROJECT_HOME="$(dirname "$SCRIPT_DIR")"
 K8S_HOME="${PROJECT_HOME}/k8s"
 
 if [ "$1" == "--clean" ]; then
+    if [ ! -f $K8S_HOME/monitor/components/alertmanager-config ]; then
+        echo "Please create the alertmanager-config file at $K8S_HOME/monitor/components/alertmanager-config"
+        exit 1
+    fi
+
+    cp $K8S_HOME/monitor/components/alertmanager-secret.yaml.example $K8S_HOME/monitor/components/alertmanager-secret.yaml
+    ALERTMANAGER_CONFIG_BASE64=$(base64 -w 0 $K8S_HOME/monitor/components/alertmanager-config)
+    sed -i "s|#BASE64_ENCODED_CONTENT_OF_ALERTMANAGER-CONFIG#|$ALERTMANAGER_CONFIG_BASE64|g" "$K8S_HOME/monitor/components/alertmanager-secret.yaml"
+
     minikube delete
     minikube start --kubernetes-version=v1.34.0 --driver=docker
     minikube addons enable metrics-server

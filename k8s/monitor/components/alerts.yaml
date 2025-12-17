@@ -11,7 +11,7 @@ spec:
   - name: backend-alerts
     rules:
     - alert: BackendHighCPUUsage
-      expr: sum(rate(container_cpu_usage_seconds_total{namespace="default", pod=~"backend-.*"}[5m])) by (pod) * 100 > 80
+      expr: sum(rate(container_cpu_usage_seconds_total{pod=~"backend-.*"}[5m])) by (pod) * 100 > 80
       for: 5m
       labels:
         severity: warning
@@ -20,7 +20,7 @@ spec:
         description: "CPU usage for backend pod {{ $labels.pod }} is {{ $value }}%"
 
     - alert: BackendHighMemoryUsage
-      expr: sum(container_memory_usage_bytes{namespace="default", pod=~"backend-.*"}) by (pod) / sum(container_spec_memory_limit_bytes{namespace="default", pod=~"backend-.*"}) by (pod) * 100 > 85
+      expr: sum by (pod) (container_memory_working_set_bytes{pod=~"backend-.*"}) / sum by (pod) (kube_pod_container_resource_limits{pod=~"backend-.*"}) * 100 > 85
       for: 5m
       labels:
         severity: warning
@@ -29,7 +29,7 @@ spec:
         description: "Memory usage for backend pod {{ $labels.pod }} is {{ $value }}%"
 
     - alert: BackendPodDown
-      expr: up{namespace="default", pod=~"backend-.*"} == 0
+      expr: max(kube_deployment_status_replicas_available{deployment="backend"}) == 0
       for: 2m
       labels:
         severity: critical
@@ -38,7 +38,7 @@ spec:
         description: "Backend pod {{ $labels.pod }} has been down for more than 2 minutes"
 
     - alert: HighHTTPErrorRate
-      expr: rate(http_requests_total{status=~"5.."}[5m]) / rate(http_requests_total[5m]) * 100 > 5
+      expr: sum(increase(http_errors_total[1m])) / sum(increase(http_requests_total[1m])) * 100 > 40
       for: 5m
       labels:
         severity: warning
@@ -55,10 +55,28 @@ spec:
         summary: "High API response time"
         description: "95th percentile API response time is {{ $value }}s"
 
+    - alert: BackendPodDesiredReplicasNotMet
+      expr: kube_deployment_status_replicas{deployment="backend"} < kube_deployment_spec_replicas{deployment="backend"}
+      for: 5m
+      labels:
+        severity: warning
+      annotations:
+        summary: "Backend deployment desired replicas not met"
+        description: "Backend deployment has {{ $value }} replicas available, which is less than desired"
+
+    - alert: HighFailedLoginRate
+      expr: sum(rate(login_attempts_total{success="false"}[1m])) / sum(rate(login_attempts_total[1m])) * 100 > 30
+      for: 5m
+      labels:
+        severity: warning
+      annotations:
+        summary: "High failed login rate"
+        description: "Failed login rate is {{ $value }}%"
+
   - name: frontend-alerts
     rules:
     - alert: FrontendHighCPUUsage
-      expr: sum(rate(container_cpu_usage_seconds_total{namespace="default", pod=~"frontend-.*"}[5m])) by (pod) * 100 > 80
+      expr: sum(rate(container_cpu_usage_seconds_total{pod=~"frontend-.*"}[5m])) by (pod) * 100 > 80
       for: 5m
       labels:
         severity: warning
@@ -67,7 +85,7 @@ spec:
         description: "CPU usage for frontend pod {{ $labels.pod }} is {{ $value }}%"
 
     - alert: FrontendHighMemoryUsage
-      expr: sum(container_memory_usage_bytes{namespace="default", pod=~"frontend-.*"}) by (pod) / sum(container_spec_memory_limit_bytes{namespace="default", pod=~"frontend-.*"}) by (pod) * 100 > 85
+      expr: sum by (pod) (container_memory_working_set_bytes{pod=~"frontend-.*"}) / sum by (pod) (kube_pod_container_resource_limits{pod=~"frontend-.*"}) * 100 > 85
       for: 5m
       labels:
         severity: warning
@@ -76,7 +94,7 @@ spec:
         description: "Memory usage for frontend pod {{ $labels.pod }} is {{ $value }}%"
 
     - alert: FrontendPodDown
-      expr: up{namespace="default", pod=~"frontend-.*"} == 0
+      expr: max(kube_deployment_status_replicas_available{deployment="frontend"}) == 0
       for: 2m
       labels:
         severity: critical
@@ -84,28 +102,19 @@ spec:
         summary: "Frontend pod {{ $labels.pod }} is down"
         description: "Frontend pod {{ $labels.pod }} has been down for more than 2 minutes"
 
+    - alert: FrontendPodDesiredReplicasNotMet
+      expr: kube_deployment_status_replicas{deployment="frontend"} < kube_deployment_spec_replicas{deployment="frontend"}
+      for: 5m
+      labels:
+        severity: warning
+      annotations:
+        summary: "Frontend deployment desired replicas not met"
+        description: "Frontend deployment has {{ $value }} replicas available, which is less than desired"
+
   - name: database-alerts
     rules:
-    - alert: DatabaseHighCPUUsage
-      expr: sum(rate(container_cpu_usage_seconds_total{namespace="default", pod=~"postgres-.*"}[5m])) by (pod) * 100 > 80
-      for: 5m
-      labels:
-        severity: warning
-      annotations:
-        summary: "Database pod {{ $labels.pod }} CPU usage is high"
-        description: "CPU usage for database pod {{ $labels.pod }} is {{ $value }}%"
-
-    - alert: DatabaseHighMemoryUsage
-      expr: sum(container_memory_usage_bytes{namespace="default", pod=~"postgres-.*"}) by (pod) / sum(container_spec_memory_limit_bytes{namespace="default", pod=~"postgres-.*"}) by (pod) * 100 > 85
-      for: 5m
-      labels:
-        severity: warning
-      annotations:
-        summary: "Database pod {{ $labels.pod }} memory usage is high"
-        description: "Memory usage for database pod {{ $labels.pod }} is {{ $value }}%"
-
     - alert: DatabasePodDown
-      expr: up{namespace="default", pod=~"postgres-.*"} == 0
+      expr: max(kube_statefulset_status_replicas_available{statefulset="postgres"}) == 0
       for: 2m
       labels:
         severity: critical
@@ -114,7 +123,7 @@ spec:
         description: "Database pod {{ $labels.pod }} has been down for more than 2 minutes"
 
     - alert: DatabaseHighDiskUsage
-      expr: (1 - (sum(container_fs_avail_bytes{namespace="default", pod=~"postgres-.*"}) / sum(container_fs_capacity_bytes{namespace="default", pod=~"postgres-.*"}))) * 100 > 90
+      expr: max(pg_database_size_bytes{datname="dev"}) / max(kube_persistentvolumeclaim_resource_requests_storage_bytes{persistentvolumeclaim="postgres-pvc"}) * 100 > 90
       for: 5m
       labels:
         severity: warning
@@ -132,13 +141,13 @@ spec:
         description: "Database has experienced deadlocks"
 
     - alert: DatabaseErrors
-      expr: increase(pg_stat_database_xact_rollback[5m]) > 10
+      expr: sum by (operation) (increase(db_queries_total{success="false"}[2m])) / sum by (operation) (increase(db_queries_total[2m])) * 100 > 40
       for: 5m
       labels:
         severity: warning
       annotations:
-        summary: "High database transaction rollbacks"
-        description: "Database has {{ $value }} transaction rollbacks in the last 5 minutes"
+        summary: "High database error rate for operation {{ $labels.operation }}"
+        description: "Database transaction rollback rate is {{ $value }}% for operation {{ $labels.operation }}"
 
   - name: kubernetes-alerts
     rules:
@@ -178,22 +187,4 @@ spec:
         summary: "Deployment {{ $labels.deployment }} has unavailable replicas"
         description: "Deployment {{ $labels.deployment }} in namespace {{ $labels.namespace }} has {{ $value }} unavailable replicas"
 
-  - name: business-metrics-alerts
-    rules:
-    - alert: HighFailedLoginRate
-      expr: sum(rate(login_attempts_total{success="false"}[1m])) / sum(rate(login_attempts_total[1m])) * 100 > 30
-      for: 5m
-      labels:
-        severity: warning
-      annotations:
-        summary: "High failed login rate"
-        description: "Failed login rate is {{ $value }}%"
-
-    - alert: LowOrderPlacementRate
-      expr: rate(order_placed_total[1h]) < 1
-      for: 10m
-      labels:
-        severity: info
-      annotations:
-        summary: "Low order placement rate"
-        description: "Order placement rate is {{ $value }} per hour"
+    
