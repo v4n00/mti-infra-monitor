@@ -18,3 +18,8 @@ data:
         jsonData:
           timeout: 60
           maxLines: 1000
+          derivedFields:
+          - datasourceUid: tempo
+            matcherRegex: "trace_id=(\\w+)"
+            name: TraceID
+            url: "$${__value.raw}"

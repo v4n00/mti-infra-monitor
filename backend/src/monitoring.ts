@@ -1,4 +1,5 @@
 import client from "prom-client";
+import { trace, context } from '@opentelemetry/api';
 
 const register = client.register;
 
@@ -65,12 +66,23 @@ export async function trackDbQuery<T>(
   }
 }
 
+// tempo trace ID retrieval
+function getTraceId(): string | undefined {
+  const currentSpan = trace.getSpan(context.active());
+  return currentSpan?.spanContext().traceId;
+}
+
 // HTTP metrics middleware
 export function httpMetricsMiddleware(req: any, res: any, next: any) {
   const start = Date.now();
   const { method, originalUrl, ip } = req;
+  
+  // 2. Get the Trace ID for this request
+  const traceId = getTraceId();
+  const traceSuffix = traceId ? ` trace_id=${traceId}` : '';
 
-  console.log(`[${new Date().toISOString()}] ${method} ${originalUrl} - ${ip}`);
+  // 3. Log with Trace ID
+  console.log(`[${new Date().toISOString()}] ${method} ${originalUrl} - ${ip}${traceSuffix}`);
 
   const route = originalUrl.split('?')[0].replace(/\/\d+/g, '/:id');
 
@@ -78,18 +90,24 @@ export function httpMetricsMiddleware(req: any, res: any, next: any) {
     const duration = (Date.now() - start) / 1000;
     httpRequestTotal.inc({ method, route, status_code: res.statusCode });
     httpRequestDuration.observe({ method, route }, duration);
-    console.log(`[${new Date().toISOString()}] ${method} ${originalUrl} - ${res.statusCode} - ${duration}s`);
+    
+    // 4. Log completion with Trace ID
+    console.log(`[${new Date().toISOString()}] ${method} ${originalUrl} - ${res.statusCode} - ${duration}s${traceSuffix}`);
   });
 
   next();
 }
 
-// error handling
 export function httpErrorHandler(err: any, req: any, res: any, next: any) {
   const { method, originalUrl, ip } = req;
   const timestamp = new Date().toISOString();
+  
+  // 5. Get Trace ID for the error
+  const traceId = getTraceId();
+  const traceSuffix = traceId ? ` trace_id=${traceId}` : '';
 
-  console.error(`[${timestamp}] ERROR ${method} ${originalUrl} - ${ip}`);
+  // 6. Append it to the error header
+  console.error(`[${timestamp}] ERROR ${method} ${originalUrl} - ${ip}${traceSuffix}`);
   console.error(`[${timestamp}] Message: ${err.message}`);
   console.error(`[${timestamp}] Stack: ${err.stack}`);
 

@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@opentelemetry/api':
+        specifier: ^1.9.0
+        version: 1.9.0
       '@prisma/adapter-pg':
         specifier: ^7.0.1
         version: 7.0.1

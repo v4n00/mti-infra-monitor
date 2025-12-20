@@ -2,6 +2,10 @@ grafana:
   adminUser: admin
   adminPassword: admin
 
+prometheus:
+  prometheusSpec:
+    enableRemoteWriteReceiver: true
+
 alertmanager:
   alertmanagerSpec:
     configSecret: alertmanager-config

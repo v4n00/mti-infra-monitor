@@ -1,0 +1,21 @@
+tempo:
+  metricsGenerator:
+    enabled: true
+    remoteWriteUrl: http://k8s-monitoring-kube-promet-prometheus.default.svc.cluster.local:9090/api/v1/write
+
+  overrides:
+    defaults:
+      metrics_generator:
+        processors:
+          - service-graphs
+          - span-metrics
+
+  receivers:
+    jaeger: {}
+    opencensus: {}
+    otlp:
+      protocols:
+        grpc:
+          endpoint: "0.0.0.0:4317"
+        http:
+          endpoint: "0.0.0.0:4318"

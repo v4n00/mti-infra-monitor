@@ -1,6 +1,7 @@
 #!/bin/bash
 set -e
 
+# helm repo add open-telemetry https://open-telemetry.github.io/opentelemetry-helm-charts
 # helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
 # helm repo add grafana https://grafana.github.io/helm-charts
 # helm repo update
@@ -26,9 +27,16 @@ if [ "$1" == "--clean" ]; then
     $PROJECT_HOME/docker/build.sh --all
 fi
 
+kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.19.2/cert-manager.yaml
+sleep 10
+helm install opentelemetry-operator open-telemetry/opentelemetry-operator
+kubectl apply -f $K8S_HOME/monitor/components/otel-instrumentation.yaml
+
 kubectl apply -f $K8S_HOME/app/
 helm install k8s-monitoring prometheus-community/kube-prometheus-stack -f $K8S_HOME/monitor/helm/prometheus-grafana-values.yaml
 helm install loki grafana/loki -f $K8S_HOME/monitor/helm/loki-values.yaml
+helm install tempo grafana/tempo -f $K8S_HOME/monitor/helm/tempo-values.yaml
+kubectl apply -f $K8S_HOME/monitor/datasource/
 kubectl apply -f $K8S_HOME/monitor/port-forward/
 kubectl apply -f $K8S_HOME/monitor/service-monitor/
 kubectl apply -f $K8S_HOME/monitor/components/
