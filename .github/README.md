@@ -2,7 +2,7 @@
 
 Master's Thesis project
 
-## TODO - 90% / 135%
+## TODO - 95% / 135%
 
 ### BACKEND - 5% / 5%
 
@@ -33,7 +33,7 @@ Master's Thesis project
 - [x] Horizontal autoscaling
 - [x] Everything is connected as expected
 
-### MONITORING - 40% / 50%
+### MONITORING - 45% / 50%
 
 - [x] Prometheus
 - [x] Grafana install
@@ -50,14 +50,14 @@ Master's Thesis project
     - [x] Loki queries
 - [x] Grafana alerts
 - [x] Grafana Tempo
-- [ ] Grafana k6
+- [x] Grafana k6
 - [ ] Load tests
 
 ### EXTRA - 0% / 35%
 
+- [ ] Ingress -> Gateway API (https://www.youtube.com/watch?v=hN6eGkFd2ME)
 - [ ] VPN
 - [ ] Presentation demo
-- [ ] Ingress -> Gateway API (https://www.youtube.com/watch?v=hN6eGkFd2ME)
 - [ ] Host
 - [ ] CI/CD
 - [ ] OTEL

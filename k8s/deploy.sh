@@ -8,6 +8,7 @@ K8S_HOME="${PROJECT_HOME}/k8s"
 CERT_MANAGER_VERSION="v1.19.2"
 OPEN_TELEMETRY_VERSION="80.6.0"
 K8S_MONITORING_VERSION="35.3.1"
+K6_VERSION="4.1.1"
 LOKI_VERSION="6.49.0"
 TEMPO_VERSION="1.24.1"
 
@@ -51,6 +52,7 @@ kubectl apply -f $K8S_HOME/app/
 helm install k8s-monitoring prometheus-community/kube-prometheus-stack -f $K8S_HOME/monitor/helm/prometheus-grafana-values.yaml --version ${K8S_MONITORING_VERSION}
 helm install loki grafana/loki -f $K8S_HOME/monitor/helm/loki-values.yaml --version ${LOKI_VERSION}
 helm install tempo grafana/tempo -f $K8S_HOME/monitor/helm/tempo-values.yaml --version ${TEMPO_VERSION}
+helm install k6-operator grafana/k6-operator --version ${K6_VERSION}
 kubectl apply -f $K8S_HOME/monitor/datasource/
 kubectl apply -f $K8S_HOME/monitor/port-forward/
 kubectl apply -f $K8S_HOME/monitor/service-monitor/
