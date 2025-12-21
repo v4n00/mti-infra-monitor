@@ -35,7 +35,7 @@ Master's Thesis project
 
 ### MONITORING - 40% / 50%
 
-- [x] Prometheus + node_exporter
+- [x] Prometheus
 - [x] Grafana install
 - [x] Backend metrics
 - [x] Postgres metrics

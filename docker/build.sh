@@ -112,7 +112,7 @@ fi
 # traffic generator
 if [[ "$BUILD_TRAFFIC" == "true" ]]; then
     echo "📦 Building traffic generator image..."
-    docker build -t ecommerce-traffic -f "$SCRIPT_DIR/Dockerfile.traffic" "$PROJECT_HOME/traffic-generator"
+    docker build -t ecommerce-traffic -f "$SCRIPT_DIR/Dockerfile.traffic" "$PROJECT_HOME/load-testing/traffic-generator"
     echo "✅ Traffic generator image built successfully"
 fi
 
