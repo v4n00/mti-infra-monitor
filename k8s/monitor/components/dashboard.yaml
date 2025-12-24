@@ -236,7 +236,7 @@ data:
                 "uid": "prometheus"
               },
               "editorMode": "code",
-              "expr": "100 * avg by () (rate(container_cpu_usage_seconds_total{pod=~\"$backend\"}[2m])) / avg by () (kube_pod_container_resource_limits{resource=\"cpu\", pod=~\"$backend\"})",
+              "expr": "100 * avg by () (rate(container_cpu_usage_seconds_total{pod=~\"$backend\"}[2m])) / avg by () (kube_pod_container_resource_requests{resource=\"cpu\", pod=~\"$backend\"})",
               "hide": false,
               "instant": false,
               "legendFormat": "AVG",
@@ -249,7 +249,7 @@ data:
                 "uid": "prometheus"
               },
               "editorMode": "code",
-              "expr": "100 * max by () (rate(container_cpu_usage_seconds_total{pod=~\"$backend\", container!=\"POD\"}[2m])) / avg by () ( kube_pod_container_resource_limits{resource=\"cpu\", pod=~\"$backend\"})",
+              "expr": "100 * max by () (rate(container_cpu_usage_seconds_total{pod=~\"$backend\", container!=\"POD\"}[2m])) / avg by () ( kube_pod_container_resource_requests{resource=\"cpu\", pod=~\"$backend\"})",
               "hide": false,
               "instant": false,
               "legendFormat": "MAX",
@@ -325,7 +325,7 @@ data:
                 "uid": "prometheus"
               },
               "editorMode": "code",
-              "expr": "100 *\nmax by () (\n  container_memory_working_set_bytes{\n    pod=~\"$backend\",\n    container!=\"POD\"\n  }\n)\n/\navg by () (\n  kube_pod_container_resource_limits{\n    resource=\"memory\",\n    pod=~\"$backend\"\n  }\n)",
+              "expr": "100 *\nmax by () (\n  container_memory_working_set_bytes{\n    pod=~\"$backend\",\n    container!=\"POD\"\n  }\n)\n/\navg by () (\n  kube_pod_container_resource_requests{\n    resource=\"memory\",\n    pod=~\"$backend\"\n  }\n)",
               "hide": false,
               "instant": false,
               "legendFormat": "AVG",
@@ -338,7 +338,7 @@ data:
                 "uid": "prometheus"
               },
               "editorMode": "code",
-              "expr": "100 *\navg by () (\n  container_memory_working_set_bytes{\n    pod=~\"$backend\",\n    container!=\"POD\"\n  }\n)\n/\navg by () (\n  kube_pod_container_resource_limits{\n    resource=\"memory\",\n    pod=~\"$backend\"\n  }\n)",
+              "expr": "100 *\navg by () (\n  container_memory_working_set_bytes{\n    pod=~\"$backend\",\n    container!=\"POD\"\n  }\n)\n/\navg by () (\n  kube_pod_container_resource_requests{\n    resource=\"memory\",\n    pod=~\"$backend\"\n  }\n)",
               "hide": false,
               "instant": false,
               "legendFormat": "MAX",
@@ -542,7 +542,7 @@ data:
                 "uid": "prometheus"
               },
               "editorMode": "code",
-              "expr": "100 * avg by () (rate(container_cpu_usage_seconds_total{pod=~\"$frontend\"}[2m])) / avg by () (kube_pod_container_resource_limits{resource=\"cpu\", pod=~\"$frontend\"})",
+              "expr": "100 * avg by () (rate(container_cpu_usage_seconds_total{pod=~\"$frontend\"}[2m])) / avg by () (kube_pod_container_resource_requests{resource=\"cpu\", pod=~\"$frontend\"})",
               "hide": false,
               "instant": false,
               "legendFormat": "AVG",
@@ -555,7 +555,7 @@ data:
                 "uid": "prometheus"
               },
               "editorMode": "code",
-              "expr": "100 * max by () (rate(container_cpu_usage_seconds_total{pod=~\"$frontend\", container!=\"POD\"}[2m])) / avg by () ( kube_pod_container_resource_limits{resource=\"cpu\", pod=~\"$frontend\"})",
+              "expr": "100 * max by () (rate(container_cpu_usage_seconds_total{pod=~\"$frontend\", container!=\"POD\"}[2m])) / avg by () ( kube_pod_container_resource_requests{resource=\"cpu\", pod=~\"$frontend\"})",
               "hide": false,
               "instant": false,
               "legendFormat": "MAX",
@@ -631,7 +631,7 @@ data:
                 "uid": "prometheus"
               },
               "editorMode": "code",
-              "expr": "100 *\nmax by () (\n  container_memory_working_set_bytes{\n    pod=~\"$frontend\",\n    container!=\"POD\"\n  }\n)\n/\navg by () (\n  kube_pod_container_resource_limits{\n    resource=\"memory\",\n    pod=~\"$frontend\"\n  }\n)",
+              "expr": "100 *\nmax by () (\n  container_memory_working_set_bytes{\n    pod=~\"$frontend\",\n    container!=\"POD\"\n  }\n)\n/\navg by () (\n  kube_pod_container_resource_requests{\n    resource=\"memory\",\n    pod=~\"$frontend\"\n  }\n)",
               "hide": false,
               "instant": false,
               "legendFormat": "AVG",
@@ -644,7 +644,7 @@ data:
                 "uid": "prometheus"
               },
               "editorMode": "code",
-              "expr": "100 *\navg by () (\n  container_memory_working_set_bytes{\n    pod=~\"$frontend\",\n    container!=\"POD\"\n  }\n)\n/\navg by () (\n  kube_pod_container_resource_limits{\n    resource=\"memory\",\n    pod=~\"$frontend\"\n  }\n)",
+              "expr": "100 *\navg by () (\n  container_memory_working_set_bytes{\n    pod=~\"$frontend\",\n    container!=\"POD\"\n  }\n)\n/\navg by () (\n  kube_pod_container_resource_requests{\n    resource=\"memory\",\n    pod=~\"$frontend\"\n  }\n)",
               "hide": false,
               "instant": false,
               "legendFormat": "MAX",
@@ -1285,7 +1285,6 @@ data:
                 }
               },
               "mappings": [],
-              "max": 0.06,
               "min": 0,
               "thresholds": {
                 "mode": "absolute",

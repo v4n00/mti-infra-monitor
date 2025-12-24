@@ -16,6 +16,8 @@ router.post('/', async (req: AuthRequest, res: Response, next) => {
     return res.status(400).json({ message: 'Invalid request' });
   }
 
+  await new Promise(resolve => setTimeout(resolve, 300)); // artificial delay for testing purposes
+
   if (items.some((item: any) => !item.productId || !item.quantity)) {
     httpErrorTotal.inc({ method: req.method, route: '/orders', status_code: 400 });
     console.error(`[${new Date().toISOString()}] Each item must have productId and quantity`);

@@ -6,8 +6,8 @@ PROJECT_HOME="$(dirname "$SCRIPT_DIR")"
 KUBERNETES_VERSION="v1.34.0"
 K8S_HOME="${PROJECT_HOME}/k8s"
 CERT_MANAGER_VERSION="v1.19.2"
-OPEN_TELEMETRY_VERSION="80.6.0"
-K8S_MONITORING_VERSION="35.3.1"
+OPEN_TELEMETRY_VERSION="0.102.0"
+K8S_MONITORING_VERSION="80.6.0"
 K6_VERSION="4.1.1"
 LOKI_VERSION="6.49.0"
 TEMPO_VERSION="1.24.1"
@@ -43,8 +43,9 @@ helm repo update
 
 # otel
 kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/${CERT_MANAGER_VERSION}/cert-manager.yaml 
-sleep 10
+sleep 20
 helm install opentelemetry-operator open-telemetry/opentelemetry-operator --version ${OPEN_TELEMETRY_VERSION}
+sleep 20
 kubectl apply -f $K8S_HOME/monitor/components/otel-instrumentation.yaml
 
 # app and monitoring
@@ -57,3 +58,6 @@ kubectl apply -f $K8S_HOME/monitor/datasource/
 kubectl apply -f $K8S_HOME/monitor/port-forward/
 kubectl apply -f $K8S_HOME/monitor/service-monitor/
 kubectl apply -f $K8S_HOME/monitor/components/
+
+echo "Deployment complete!"
+echo "Minikube IP: $(minikube ip)"

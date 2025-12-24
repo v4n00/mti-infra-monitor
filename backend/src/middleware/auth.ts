@@ -8,7 +8,7 @@ export interface AuthRequest extends Request {
   user?: { id: number; email: string };
 }
 
-export const authenticateToken = (req: AuthRequest, res: Response, next: NextFunction) => {
+export const authenticateToken = async (req: AuthRequest, res: Response, next: NextFunction) => {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
 
@@ -17,6 +17,8 @@ export const authenticateToken = (req: AuthRequest, res: Response, next: NextFun
     httpErrorTotal.inc({ method: req.method, route: req.path, status_code: 401 });
     return res.status(401).json({ message: 'Access token required' });
   }
+
+  await new Promise(resolve => setTimeout(resolve, 200)); // artificial delay for testing purposes
 
   jwt.verify(token, JWT_SECRET, (err, user) => {
     if (err) {
