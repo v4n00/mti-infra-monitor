@@ -3,6 +3,7 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: postgres-secret
+  namespace: default
 data:
   # base64 encoded: dev
   POSTGRES_USER: ZGV2
@@ -16,6 +17,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: postgres-pvc
+  namespace: default
 spec:
   accessModes:
     - ReadWriteOnce
@@ -28,6 +30,7 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: postgres
+  namespace: default
 spec:
   selector:
     matchLabels:
@@ -77,6 +80,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: postgres
+  namespace: default
 spec:
   ports:
     - port: 5432

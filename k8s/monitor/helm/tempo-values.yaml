@@ -1,7 +1,7 @@
 tempo:
   metricsGenerator:
     enabled: true
-    remoteWriteUrl: http://k8s-monitoring-kube-promet-prometheus.default.svc.cluster.local:9090/api/v1/write
+    remoteWriteUrl: http://k8s-monitoring-kube-promet-prometheus.monitoring.svc.cluster.local:9090/api/v1/write
 
   overrides:
     defaults:

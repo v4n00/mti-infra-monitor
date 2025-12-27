@@ -2,13 +2,14 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: promtail-sa
-  namespace: default
+  namespace: monitoring
 
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   name: promtail-clusterrole
+  namespace: monitoring
 rules:
   - apiGroups: [""]
     resources:
@@ -24,10 +25,11 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   name: promtail-clusterrolebinding
+  namespace: monitoring
 subjects:
   - kind: ServiceAccount
     name: promtail-sa
-    namespace: default
+    namespace: monitoring
 roleRef:
   kind: ClusterRole
   name: promtail-clusterrole
@@ -38,7 +40,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: promtail-config
-  namespace: default
+  namespace: monitoring
 data:
   promtail.yaml: |
     server:
@@ -49,7 +51,7 @@ data:
       filename: /tmp/positions.yaml
 
     clients:
-      - url: http://loki-gateway.default.svc.cluster.local/loki/api/v1/push
+      - url: http://loki-gateway.monitoring.svc.cluster.local/loki/api/v1/push
 
     scrape_configs:
       - job_name: kubernetes-pods
@@ -80,7 +82,7 @@ apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   name: promtail
-  namespace: default
+  namespace: monitoring
   labels:
     app: promtail
 spec:

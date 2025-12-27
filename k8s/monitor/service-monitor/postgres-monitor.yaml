@@ -2,9 +2,13 @@ apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
   name: postgres-exporter
+  namespace: monitoring
   labels:
     release: k8s-monitoring
 spec:
+  namespaceSelector:
+    matchNames:
+      - default
   selector:
     matchLabels:
       app: postgres-exporter

@@ -42,23 +42,25 @@ if ! helm repo list | grep -q "grafana"; then
 fi
 helm repo update
 
+kubectl create namespace monitoring
+
 # otel
 kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/${CERT_MANAGER_VERSION}/cert-manager.yaml 
 kubectl wait --namespace cert-manager --for=condition=available deployment --all --timeout=300s
-helm install opentelemetry-operator open-telemetry/opentelemetry-operator --version ${OPEN_TELEMETRY_VERSION} --wait
+helm install opentelemetry-operator open-telemetry/opentelemetry-operator --version ${OPEN_TELEMETRY_VERSION} --wait --namespace monitoring
 kubectl apply -f $K8S_HOME/monitor/components/otel-instrumentation.yaml
 
 # gateway
 kubectl apply -f https://github.com/kubernetes-sigs/gateway-api/releases/download/${GATEWAY_API_VERSION}/standard-install.yaml
 kubectl kustomize https://github.com/nginx/nginx-gateway-fabric/config/crd/gateway-api/standard | kubectl apply -f -
 helm install ngf oci://ghcr.io/nginx/charts/nginx-gateway-fabric -f $K8S_HOME/monitor/helm/nginx-gateway-fabric-values.yaml --version ${NGINX_FABRIC_VERSION} --create-namespace --namespace nginx-gateway
-kubectl wait --timeout=5m -n nginx-gateway deployment/ngf-nginx-gateway-fabric --for=condition=Available
+kubectl wait --timeout=5m -n nginx-gateway deployment/ngf-nginx-gateway --for=condition=Available
 
 # app and monitoring
 kubectl apply -f $K8S_HOME/app/
-helm install k8s-monitoring prometheus-community/kube-prometheus-stack -f $K8S_HOME/monitor/helm/prometheus-grafana-values.yaml --version ${K8S_MONITORING_VERSION}
-helm install loki grafana/loki -f $K8S_HOME/monitor/helm/loki-values.yaml --version ${LOKI_VERSION}
-helm install tempo grafana/tempo -f $K8S_HOME/monitor/helm/tempo-values.yaml --version ${TEMPO_VERSION}
+helm install k8s-monitoring prometheus-community/kube-prometheus-stack -f $K8S_HOME/monitor/helm/prometheus-grafana-values.yaml --version ${K8S_MONITORING_VERSION} --namespace monitoring
+helm install loki grafana/loki -f $K8S_HOME/monitor/helm/loki-values.yaml --version ${LOKI_VERSION} --namespace monitoring
+helm install tempo grafana/tempo -f $K8S_HOME/monitor/helm/tempo-values.yaml --version ${TEMPO_VERSION} --namespace monitoring
 helm install k6-operator grafana/k6-operator --version ${K6_VERSION}
 kubectl apply -f $K8S_HOME/monitor/datasource/
 kubectl apply -f $K8S_HOME/monitor/port-forward/

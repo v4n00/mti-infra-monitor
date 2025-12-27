@@ -3,6 +3,7 @@ set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+NAMESPACE="monitoring"
 
 if [ $# -eq 0 ]; then
     echo "Error: No test name provided."
@@ -28,21 +29,20 @@ TESTRUN_NAME="load-test-${TEST_NAME}"
 
 echo "Checking for existing resources..."
 
-if kubectl get testrun "$TESTRUN_NAME" &> /dev/null; then
+if kubectl get testrun "$TESTRUN_NAME" -n "$NAMESPACE" &> /dev/null; then
     echo "Deleting existing TestRun: $TESTRUN_NAME"
-    kubectl delete testrun "$TESTRUN_NAME"
+    kubectl delete testrun "$TESTRUN_NAME" -n "$NAMESPACE"
     sleep 1
 fi
 
-if kubectl get configmap "$CONFIGMAP_NAME" &> /dev/null; then
+if kubectl get configmap "$CONFIGMAP_NAME" -n "$NAMESPACE" &> /dev/null; then
     echo "Deleting existing ConfigMap: $CONFIGMAP_NAME"
-    kubectl delete configmap "$CONFIGMAP_NAME"
+    kubectl delete configmap "$CONFIGMAP_NAME" -n "$NAMESPACE"
     sleep 1
 fi
 
 echo "Creating ConfigMap: $CONFIGMAP_NAME"
-kubectl create configmap "$CONFIGMAP_NAME" \
-    --from-file="$TEST_FILE=$SCRIPT_DIR/$TEST_FILE"
+kubectl create configmap "$CONFIGMAP_NAME" --from-file="$TEST_FILE=$SCRIPT_DIR/$TEST_FILE" -n "$NAMESPACE"
 
 echo "Creating TestRun: $TESTRUN_NAME"
 cat <<EOF | kubectl apply -f -
@@ -50,6 +50,7 @@ apiVersion: k6.io/v1alpha1
 kind: TestRun
 metadata:
   name: $TESTRUN_NAME
+  namespace: monitoring
 spec:
   parallelism: 1
   script:
@@ -62,5 +63,5 @@ echo "========================================"
 echo "TestRun created successfully!"
 echo ""
 echo "To monitor the test:"
-echo "kubectl get testruns"
-echo "kubectl logs -f job/$TESTRUN_NAME-1"
+echo "kubectl -n monitoring get testruns"
+echo "kubectl -n monitoring logs -f job/$TESTRUN_NAME-1"

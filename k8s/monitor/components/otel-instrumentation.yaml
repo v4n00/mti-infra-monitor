@@ -2,9 +2,10 @@ apiVersion: opentelemetry.io/v1alpha1
 kind: Instrumentation
 metadata:
   name: otel-instrumentation
+  namespace: default
 spec:
   exporter:
-    endpoint: http://tempo.default.svc.cluster.local:4318
+    endpoint: http://tempo.monitoring.svc.cluster.local:4318
   propagators:
     - tracecontext
     - baggage

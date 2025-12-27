@@ -10,7 +10,7 @@ export const options = {
   },
 };
 
-const BASE_URL = 'http://backend:2000/api';
+const BASE_URL = 'http://backend.default.svc.cluster.local:2000/api';
 
 export function setup() {
   const productsResponse = http.get(`${BASE_URL}/products`);

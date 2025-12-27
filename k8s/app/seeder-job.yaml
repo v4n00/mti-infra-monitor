@@ -3,6 +3,7 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: db-seeder
+  namespace: default
 spec:
   template:
     spec:

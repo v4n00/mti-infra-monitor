@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: grafana-datasource-loki
-  namespace: default
+  namespace: monitoring
   labels:
     grafana_datasource: "1"
 data:
@@ -13,7 +13,7 @@ data:
         type: loki
         uid: loki-uid
         access: proxy
-        url: http://loki-gateway.default.svc.cluster.local
+        url: http://loki-gateway.monitoring.svc.cluster.local
         isDefault: false
         jsonData:
           timeout: 60

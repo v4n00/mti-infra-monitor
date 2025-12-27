@@ -3,6 +3,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: metrics-proxy-config
+  namespace: monitoring
 data:
   haproxy.cfg: |
     defaults
@@ -37,11 +38,13 @@ data:
 
     backend etcd
       server etcd 127.0.0.1:2381
+
 ---
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   name: metrics-proxy
+  namespace: monitoring
 spec:
   selector:
     matchLabels:

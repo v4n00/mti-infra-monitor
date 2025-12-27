@@ -29,7 +29,7 @@ export const options = {
     },
 };
 
-const BASE_URL = 'http://backend:2000/api';
+const BASE_URL = 'http://backend.default.svc.cluster.local:2000/api';
 
 const scenarios = ['browse_only', 'auth_user', 'order_flow', 'others'];
 const weight = [0.4, 0.3, 0.2, 0.1];
