@@ -2,7 +2,7 @@
 
 Master's Thesis project
 
-## TODO - 110% / 140%
+## TODO - 115% / 140%
 
 ### BACKEND - 5% / 5%
 
@@ -53,11 +53,11 @@ Master's Thesis project
 - [x] Grafana k6
 - [x] Load tests
 
-### EXTRA - 10% / 40%
+### EXTRA - 15% / 40%
 
 - [x] Ingress -> Gateway API
 - [x] Separate namespaces
-- [ ] VPN
+- [x] VPN
 - [ ] Presentation demo
 - [ ] Host
 - [ ] CI/CD
