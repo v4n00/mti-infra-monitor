@@ -11,6 +11,8 @@ K8S_MONITORING_VERSION="80.6.0"
 K6_VERSION="4.1.1"
 LOKI_VERSION="6.49.0"
 TEMPO_VERSION="1.24.1"
+GATEWAY_API_VERSION="v1.4.1"
+NGINX_FABRIC_VERSION="2.3.0"
 
 if [ "$1" == "--clean" ]; then
     if [ ! -f $K8S_HOME/monitor/components/alertmanager-config ]; then
@@ -25,7 +27,6 @@ if [ "$1" == "--clean" ]; then
     minikube delete
     minikube start --kubernetes-version=${KUBERNETES_VERSION} --driver=docker
     minikube addons enable metrics-server
-    minikube addons enable ingress
     $PROJECT_HOME/docker/build.sh --all
 fi
 
@@ -43,10 +44,15 @@ helm repo update
 
 # otel
 kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/${CERT_MANAGER_VERSION}/cert-manager.yaml 
-sleep 20
-helm install opentelemetry-operator open-telemetry/opentelemetry-operator --version ${OPEN_TELEMETRY_VERSION}
-sleep 20
+kubectl wait --namespace cert-manager --for=condition=available deployment --all --timeout=300s
+helm install opentelemetry-operator open-telemetry/opentelemetry-operator --version ${OPEN_TELEMETRY_VERSION} --wait
 kubectl apply -f $K8S_HOME/monitor/components/otel-instrumentation.yaml
+
+# gateway
+kubectl apply -f https://github.com/kubernetes-sigs/gateway-api/releases/download/${GATEWAY_API_VERSION}/standard-install.yaml
+kubectl kustomize https://github.com/nginx/nginx-gateway-fabric/config/crd/gateway-api/standard | kubectl apply -f -
+helm install ngf oci://ghcr.io/nginx/charts/nginx-gateway-fabric -f $K8S_HOME/monitor/helm/nginx-gateway-fabric-values.yaml --version ${NGINX_FABRIC_VERSION} --create-namespace --namespace nginx-gateway
+kubectl wait --timeout=5m -n nginx-gateway deployment/ngf-nginx-gateway-fabric --for=condition=Available
 
 # app and monitoring
 kubectl apply -f $K8S_HOME/app/
@@ -59,5 +65,6 @@ kubectl apply -f $K8S_HOME/monitor/port-forward/
 kubectl apply -f $K8S_HOME/monitor/service-monitor/
 kubectl apply -f $K8S_HOME/monitor/components/
 
+minikube service -n nginx-gateway app-gateway-nginx
 echo "Deployment complete!"
 echo "Minikube IP: $(minikube ip)"
