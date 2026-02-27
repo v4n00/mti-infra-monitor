@@ -48,6 +48,7 @@ kubectl create namespace monitoring
 kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/${CERT_MANAGER_VERSION}/cert-manager.yaml 
 kubectl wait --namespace cert-manager --for=condition=available deployment --all --timeout=300s
 helm install opentelemetry-operator open-telemetry/opentelemetry-operator --version ${OPEN_TELEMETRY_VERSION} --wait --namespace monitoring
+sleep 10
 kubectl apply -f $K8S_HOME/monitor/components/otel-instrumentation.yaml
 
 # gateway

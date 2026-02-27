@@ -1295,7 +1295,7 @@ data:
                   },
                   {
                     "color": "red",
-                    "value": 0.05
+                    "value": 1
                   }
                 ]
               },

@@ -18,8 +18,6 @@ export const authenticateToken = async (req: AuthRequest, res: Response, next: N
     return res.status(401).json({ message: 'Access token required' });
   }
 
-  await new Promise(resolve => setTimeout(resolve, 200)); // artificial delay for testing purposes
-
   jwt.verify(token, JWT_SECRET, (err, user) => {
     if (err) {
       console.error(`[${new Date().toISOString()}] Invalid token`);

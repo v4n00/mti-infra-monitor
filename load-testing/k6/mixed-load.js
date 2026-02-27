@@ -1,33 +1,44 @@
 import http from 'k6/http';
 import { sleep, check } from 'k6';
 
-const stages_low = [
-    { duration: '30s', target: 10 },
-    { duration: '30s', target: 20 },
-    { duration: '30s', target: 30 },
-    { duration: '1m', target: 50 },
-    { duration: '1m', target: 20 },
-    { duration: '30s', target: 10 }
-];
+const ACTIVE_SCENARIO = 'gradual_stronger'; 
 
-const stages_high = [
-    { duration: '30s', target: 25 },
-    { duration: '30s', target: 35 },
-    { duration: '30s', target: 50 },
-    { duration: '1m', target: 60 },
-    { duration: '1m', target: 35 },
-    { duration: '30s', target: 20 }
-];
-
-const allStages = [stages_low, stages_high];
+const k6scenarios = {
+    gradual: {
+        executor: 'ramping-vus',
+        startVUs: 1,
+        stages: [
+            { duration: '2m', target: 15 },
+            { duration: '2m', target: 30 },
+            { duration: '3m', target: 50 },
+            { duration: '2m', target: 10 },
+        ],
+    },
+    gradual_stronger: {
+        executor: 'ramping-vus',
+        startVUs: 1,
+        stages: [
+            { duration: '2m', target: 20 },
+            { duration: '2m', target: 40 },
+            { duration: '3m', target: 70 },
+            { duration: '2m', target: 20 },
+        ],
+    },
+};
 
 export const options = {
-    stages: allStages[0],
+    scenarios: {
+        [ACTIVE_SCENARIO]: {
+            ...k6scenarios[ACTIVE_SCENARIO],
+        },
+    },
+
     thresholds: {
         http_req_duration: ['p(95)<1500'],
         http_req_failed: ['rate<0.05'],
     },
 };
+
 
 const BASE_URL = 'http://backend.default.svc.cluster.local:2000/api';
 
@@ -78,11 +89,11 @@ function browseScenario() {
                     'detail status is 200': (r) => r.status === 200,
                 });
 
-                sleep(0.5);
+                sleep(17 + Math.random() * 3);
         }
     }
 
-    sleep(Math.random() * 3 + 1);
+    sleep(Math.random() * 2 + 7);
 }
 
 function authScenario() {
@@ -107,21 +118,7 @@ function authScenario() {
         });
     }
 
-  sleep(2);
-}
-
-function failLoginScenario() {
-
-    const loginResponse = http.post(`${BASE_URL}/users/login`,
-        JSON.stringify({ email: 'test@test.com', password: 'wrongpassword' }),
-        { headers: { 'Content-Type': 'application/json' } }
-    );
-
-    check(loginResponse, {
-        'failed login status is 400': (r) => r.status === 400,
-    });
-
-    sleep(1);
+  sleep(Math.random() * 2);
 }
 
 function orderScenario() {
@@ -169,16 +166,16 @@ function orderScenario() {
         }
     }
 
-    sleep(4);
+    sleep(Math.random() * 4);
 }
 
 function othersScenario() {
     
-    const response = http.get('http://frontend:3000/');
+    const response = http.get('http://frontend.default.svc.cluster.local:3000/');
 
     check(response, {
         'others status is 200': (r) => r.status === 200,
     });
 
-    sleep(Math.random() * 2 + 1);
+    sleep(Math.random() * 2);
 }
