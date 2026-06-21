@@ -7,7 +7,7 @@ async function main() {
     update: {},
     create: {
       email: 'user1@example.com',
-      password: await bcrypt.hash('password123', 10),
+      password: await bcrypt.hash('password123', 2),
     },
   });
 

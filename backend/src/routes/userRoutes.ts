@@ -7,8 +7,7 @@ import prisma from '../config/prisma';
 const router = Router();
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 
-// Import metrics from monitoring module
-import { httpErrorTotal, loginAttemptsTotal, trackDbQuery } from '../monitoring';
+import { httpErrorTotal, loginAttemptsTotal, trackDbQuery, trackSegment } from '../monitoring';
 
 router.post('/signup', async (req, res, next) => {
   const { email, password } = req.body;
@@ -29,7 +28,7 @@ router.post('/signup', async (req, res, next) => {
       return res.status(400).json({ message: 'User already exists' });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(password, 2);
     const user = await trackDbQuery('user_create', () => 
       prisma.user.create({
         data: { email, password: hashedPassword },
@@ -64,7 +63,9 @@ router.post('/login', async (req, res, next) => {
       return res.status(400).json({ message: 'Invalid credentials' });
     }
 
-    const isValidPassword = await bcrypt.compare(password, user.password);
+    const isValidPassword = await trackSegment('auth.bcryptCompare', () => 
+      bcrypt.compare(password, user.password)
+    );
     if (!isValidPassword) {
       loginAttemptsTotal.inc({ success: 'false' });
       httpErrorTotal.inc({ method: req.method, route: '/users/login', status_code: 400 });

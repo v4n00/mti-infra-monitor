@@ -25,7 +25,7 @@ if [ "$1" == "--clean" ]; then
     sed -i "s|#BASE64_ENCODED_CONTENT_OF_ALERTMANAGER-CONFIG#|$ALERTMANAGER_CONFIG_BASE64|g" "$K8S_HOME/monitor/components/alertmanager-secret.yaml"
 
     minikube delete
-    minikube start --kubernetes-version=${KUBERNETES_VERSION} --driver=docker
+    minikube start --kubernetes-version=${KUBERNETES_VERSION} --driver=docker --force --cpus=3 --memory=5120
     minikube addons enable metrics-server
     $PROJECT_HOME/docker/build.sh --all
 fi

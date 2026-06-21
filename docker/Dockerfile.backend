@@ -1,7 +1,7 @@
 # Base image
 FROM node:24-alpine AS base
 WORKDIR /app
-RUN npm install -g pnpm
+RUN npm install -g pnpm@10.34.1
 
 # Build stage
 FROM base AS builder
