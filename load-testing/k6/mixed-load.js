@@ -18,11 +18,11 @@ const k6scenarios = {
     executor: 'ramping-vus',
     startVUs: 1,
     stages: [
-      { duration: '2m', target: 30 },
-      { duration: '2m', target: 50 },
-      { duration: '3m', target: 80 },
-      { duration: '3m', target: 110 },
-      { duration: '2m', target: 50 },
+      { duration: '2m', target: 70 },
+      { duration: '2m', target: 100 },
+      { duration: '2m', target: 170 },
+      { duration: '2m', target: 210 },
+      { duration: '2m', target: 100 },
     ],
   },
 };
