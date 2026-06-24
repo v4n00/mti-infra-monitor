@@ -13,6 +13,8 @@ LOKI_VERSION="6.49.0"
 TEMPO_VERSION="1.24.1"
 GATEWAY_API_VERSION="v1.4.1"
 NGINX_FABRIC_VERSION="2.3.0"
+CPUS=6
+MEMORY=10240
 
 if [ "$1" == "--clean" ]; then
     if [ ! -f $K8S_HOME/monitor/components/alertmanager-config ]; then
@@ -25,7 +27,7 @@ if [ "$1" == "--clean" ]; then
     sed -i "s|#BASE64_ENCODED_CONTENT_OF_ALERTMANAGER-CONFIG#|$ALERTMANAGER_CONFIG_BASE64|g" "$K8S_HOME/monitor/components/alertmanager-secret.yaml"
 
     minikube delete
-    minikube start --kubernetes-version=${KUBERNETES_VERSION} --driver=docker --force --cpus=6 --memory=10240
+    minikube start --kubernetes-version=${KUBERNETES_VERSION} --driver=docker --force --cpus=${CPUS} --memory=${MEMORY}
     minikube addons enable metrics-server
     $PROJECT_HOME/docker/build.sh --all
 fi
