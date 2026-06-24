@@ -3,8 +3,6 @@
 set -e
 set -o pipefail
 
-MINIKUBE_VERSION=1.36.0
-
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 
@@ -27,7 +25,7 @@ yum install -y docker pnpm kubectl helm git -y
 systemctl enable --now docker
 usermod -aG docker $USER
 
-MINIKUBE_VERSION=1.36.0
+MINIKUBE_VERSION=1.38.1
 MINIKUBE_RPM="minikube-${MINIKUBE_VERSION}-0.x86_64.rpm"
 curl -fLO "https://storage.googleapis.com/minikube/releases/v${MINIKUBE_VERSION}/${MINIKUBE_RPM}"
 rpm -Uvh "${MINIKUBE_RPM}"
